@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+@import "tailwindcss";
+@import './styles/design-system.css';
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --color-navy: #0a0e27;
+  --color-purple: #6347d1;
+  --color-purple-light: #7c5ce0;
+  --color-green: #10b981;
+  --color-orange: #f59e0b;
+  --color-blue: #3b82f6;
+  --color-surface: #f8f9fc;
+  --color-sidebar: #0f1222;
+  --color-sidebar-hover: #1a1f35;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-navy);
+  background: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}

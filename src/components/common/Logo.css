@@ -1,0 +1,53 @@
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.logo__title {
+  margin: 0;
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-weight: 700;
+  color: var(--color-navy);
+  letter-spacing: -0.02em;
+}
+
+.logo__subtitle {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--color-purple);
+}
+
+.logo__accent {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  margin-top: 0.75rem;
+  background: var(--color-purple);
+  border-radius: 999px;
+}
+
+.logo--splash .logo__title {
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+}
+
+.logo--splash .logo__subtitle {
+  font-size: clamp(0.65rem, 1.8vw, 0.8rem);
+}
+
+.logo--header .logo__title {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+}
+
+.logo--header .logo__subtitle {
+  font-size: 0.65rem;
+}
+
+.logo--header .logo__accent {
+  width: 2rem;
+  margin-top: 0.5rem;
+}
