@@ -4,7 +4,6 @@ import {
   DashboardStats,
   Filters,
   PatientActivityTable,
-  RecentActivity,
 } from '../../components/dashboard';
 import { DataLoadErrorScreen } from '../../components/common';
 import { useDashboard, useLeadFilters } from '../../hooks/useDashboard';
@@ -90,7 +89,7 @@ export function DashboardPage() {
           <div
             className={
               isDesktop
-                ? 'grid min-h-0 flex-1 w-full grid-cols-[minmax(0,1fr)_360px] gap-3 items-start overflow-hidden'
+                ? 'flex min-h-0 flex-1 w-full overflow-hidden'
                 : 'flex flex-col gap-3'
             }
           >
@@ -110,16 +109,6 @@ export function DashboardPage() {
                 onViewLead={viewLead}
                 onNextAction={handleNextActionClick}
               />
-            </div>
-
-            <div
-              className={
-                isDesktop
-                  ? 'min-h-0 w-full overflow-hidden'
-                  : 'w-full'
-              }
-            >
-              <RecentActivity />
             </div>
           </div>
         </div>

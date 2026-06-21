@@ -1,9 +1,8 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Building2, Lock, Stethoscope, UserRound } from 'lucide-react';
+import { ArrowRight, Building2, Lock } from 'lucide-react';
 import { GlassPageShell } from '../../components/common';
 import { ClinicSetupForm } from './ClinicSetupForm';
-import { RoleOptionCard } from './RoleOptionCard';
 import { WorkspaceBrandPanel } from './WorkspaceBrandPanel';
 import { useWorkspacePage } from './useWorkspacePage';
 import './WorkspacePage.css';
@@ -12,8 +11,6 @@ const CARD_EASE = [0.22, 1, 0.36, 1] as const;
 
 function WorkspacePageComponent() {
   const {
-    selectedWorkspace,
-    setSelectedWorkspace,
     form,
     updateField,
     fieldErrors,
@@ -69,41 +66,11 @@ function WorkspacePageComponent() {
                   onFieldChange={updateField}
                 />
 
-                <div className="workspace-page__roles">
-                  <span className="workspace-page__roles-label">Your Role</span>
-                  <div
-                    className="workspace-page__roles-grid"
-                    role="list"
-                    aria-label="Workspace roles"
-                  >
-                    <div role="listitem">
-                      <RoleOptionCard
-                        title="Receptionist"
-                        description="Manage inquiries, follow-ups and patient communication"
-                        icon={UserRound}
-                        accent="purple"
-                        isSelected={selectedWorkspace === 'reception'}
-                        onSelect={() => setSelectedWorkspace('reception')}
-                      />
-                    </div>
-                    <div role="listitem">
-                      <RoleOptionCard
-                        title="Doctor"
-                        description="Review inquiries, provide recommendations and notes"
-                        icon={Stethoscope}
-                        accent="green"
-                        isSelected={selectedWorkspace === 'doctor'}
-                        onSelect={() => setSelectedWorkspace('doctor')}
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 <button
                   type="button"
                   className="workspace-page__continue"
                   disabled={isSubmitting}
-                  onClick={() => void continueToWorkspace(selectedWorkspace)}
+                  onClick={() => void continueToWorkspace('reception')}
                 >
                   <span>{isSubmitting ? 'Please wait...' : 'Continue'}</span>
                   <ArrowRight size={18} aria-hidden="true" />

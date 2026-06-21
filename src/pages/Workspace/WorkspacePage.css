@@ -148,6 +148,7 @@
   .workspace-page__card {
     width: 100%;
     max-width: 100%;
+    transform: translateY(-80px);
   }
 }
 

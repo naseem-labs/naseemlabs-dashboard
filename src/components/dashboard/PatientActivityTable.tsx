@@ -139,7 +139,7 @@ const TableRows = memo(function TableRows({
               <button
                 type="button"
                 onClick={() => onViewLead(lead.id)}
-                className="inline-flex items-center gap-1.5 rounded-xl border-2 border-purple-600 bg-white px-4 py-2 text-sm font-semibold text-purple-600 shadow-sm transition hover:bg-purple-50 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-100"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-100"
               >
                 View Lead
                 <ArrowRight size={14} aria-hidden="true" />
@@ -205,7 +205,7 @@ const TablePagination = memo(function TablePagination({
 
         <div className="flex items-center gap-1 rounded-lg bg-slate-50 px-2 py-1">
           {Array.from({ length: totalPages }, (_, index) => index + 1)
-            .slice(0, 5)
+            .slice(Math.max(0, page - 2), Math.max(0, page - 2) + 3)
             .map((pageNumber) => (
               <button
                 key={pageNumber}
@@ -222,6 +222,9 @@ const TablePagination = memo(function TablePagination({
                 {pageNumber}
               </button>
             ))}
+          {totalPages > 3 && (
+            <span className="px-1 text-slate-400">...</span>
+          )}
         </div>
 
         <button
