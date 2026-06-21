@@ -81,7 +81,10 @@ const TableRows = memo(function TableRows({
   if (leads.length === 0) {
     return (
       <tr>
-        <td colSpan={6} className="px-5 py-12 text-center text-sm text-slate-500">
+        <td
+          colSpan={6}
+          className="h-[400px] px-5 py-6 text-center text-sm text-slate-500 align-middle"
+        >
           No leads match your current filters.
         </td>
       </tr>
@@ -96,7 +99,7 @@ const TableRows = memo(function TableRows({
         return (
           <tr
             key={lead.id}
-            className="h-[72px] transition hover:bg-slate-50/60"
+            className="h-[72px] transition hover:bg-slate-50"
             style={{ height: TABLE_LAYOUT.ROW_HEIGHT }}
           >
             <td className="px-5 py-4">
@@ -182,25 +185,25 @@ const TablePagination = memo(function TablePagination({
 
   return (
     <div
-      className="flex shrink-0 flex-col gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5"
+      className="flex shrink-0 flex-col gap-3 px-3 py-3 sm:px-5"
       style={{ minHeight: TABLE_LAYOUT.PAGINATION_HEIGHT }}
     >
-      <p className="text-sm text-slate-500">
+      <p className="text-xs text-slate-500 lg:text-sm">
         Showing {start} to {end} of {totalCount} leads
       </p>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-between gap-2">
         <button
           type="button"
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy transition hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy transition hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Previous page"
         >
           <ChevronLeft size={16} />
         </button>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 rounded-lg bg-slate-50 px-2 py-1">
           {Array.from({ length: totalPages }, (_, index) => index + 1)
             .slice(0, 5)
             .map((pageNumber) => (
@@ -208,7 +211,7 @@ const TablePagination = memo(function TablePagination({
                 key={pageNumber}
                 type="button"
                 onClick={() => onPageChange(pageNumber)}
-                className={`inline-flex h-9 min-w-9 items-center justify-center rounded-lg px-2 text-sm font-medium transition ${
+                className={`inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-medium transition ${
                   pageNumber === page
                     ? 'bg-purple-600 text-white'
                     : 'border border-slate-200 bg-white text-navy hover:border-slate-300'
@@ -225,7 +228,7 @@ const TablePagination = memo(function TablePagination({
           type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy transition hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-navy transition hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Next page"
         >
           <ChevronRight size={16} />
@@ -247,21 +250,22 @@ function PatientActivityTableComponent({
   onViewLead,
   onNextAction,
 }: PatientActivityTableProps) {
-  const bodyHeight = fixedRowCount
-    ? fixedRowCount * TABLE_LAYOUT.ROW_HEIGHT
-    : undefined;
+  const bodyHeight =
+    leads.length > 0 && fixedRowCount
+      ? fixedRowCount * TABLE_LAYOUT.ROW_HEIGHT
+      : undefined;
 
   return (
     <section
-      className={`app-glass-card app-glass-card--solid overflow-hidden ${
-        isDesktopLayout ? 'flex h-full flex-col' : ''
+      className={`w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm ${
+        isDesktopLayout ? 'flex min-h-[540px] flex-col' : ''
       }`}
       aria-label="Patient activity table"
     >
-      <div className={`hidden lg:block ${isDesktopLayout ? 'min-h-0 flex-1 overflow-hidden' : 'overflow-x-auto'}`}>
-        <table className="min-w-full divide-y divide-slate-100">
+      <div className={`hidden w-full lg:block ${isDesktopLayout ? 'min-h-0 flex-1 overflow-auto' : 'overflow-x-auto min-h-[540px]'}`}>
+        <table className="w-full min-w-full divide-y divide-slate-100">
           <thead
-            className="bg-slate-50/80"
+            className="sticky top-0 bg-slate-50"
             style={{ height: TABLE_LAYOUT.HEADER_HEIGHT }}
           >
             <tr>
@@ -292,9 +296,9 @@ function PatientActivityTableComponent({
         </table>
       </div>
 
-      <div className="space-y-3 p-4 lg:hidden">
+      <div className="min-h-[540px] space-y-3 p-3 lg:hidden">
         {leads.length === 0 ? (
-          <div className="py-12 text-center text-sm text-slate-500">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-12 text-center text-base text-slate-500">
             No leads match your current filters.
           </div>
         ) : (
@@ -309,13 +313,25 @@ function PatientActivityTableComponent({
         )}
       </div>
 
-      <TablePagination
-        page={page}
-        pageSize={pageSize}
-        totalCount={totalCount}
-        totalPages={totalPages}
-        onPageChange={onPageChange}
-      />
+      <div className="hidden shrink-0 lg:block">
+        <TablePagination
+          page={page}
+          pageSize={pageSize}
+          totalCount={totalCount}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
+      </div>
+
+      <div className="border-t border-slate-100 p-3 lg:hidden">
+        <TablePagination
+          page={page}
+          pageSize={pageSize}
+          totalCount={totalCount}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
+      </div>
     </section>
   );
 }
@@ -334,8 +350,8 @@ const LeadMobileCard = memo(function LeadMobileCard({
   const stageConfig = STAGE_CONFIG[lead.stage];
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-slate-50/40 p-4">
-      <div className="mb-3 flex items-center gap-3">
+    <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+      <div className="mb-2 flex items-center gap-3">
         <PatientAvatar initials={lead.avatar_initials} size="sm" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-navy">
@@ -353,7 +369,7 @@ const LeadMobileCard = memo(function LeadMobileCard({
       <button
         type="button"
         onClick={() => onNextAction(lead)}
-        className={`mb-3 text-left text-sm font-semibold ${actionVariantClasses[lead.next_action.variant]}`}
+        className={`mb-2 text-left text-sm font-semibold ${actionVariantClasses[lead.next_action.variant]}`}
       >
         {lead.next_action.label}
       </button>

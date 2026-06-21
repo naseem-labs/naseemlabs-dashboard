@@ -1,7 +1,7 @@
 .glass-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 1.5rem;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -26,6 +26,7 @@
   object-fit: cover;
   object-position: center;
   transform: scale(1.02);
+  filter: brightness(0.92) saturate(0.92);
   pointer-events: none;
   user-select: none;
 }
@@ -37,11 +38,11 @@
   background:
     linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.12) 0%,
-      rgba(255, 255, 255, 0.04) 45%,
-      rgba(255, 255, 255, 0.14) 100%
-    ),
-    rgba(248, 246, 242, 0.12);
+      rgba(255,255,255,0.25) 0%,
+      rgba(255,255,255,0.12) 50%,
+      rgba(255,255,255,0.28) 100%
+    );
+  backdrop-filter: blur(3px);
   pointer-events: none;
 }
 

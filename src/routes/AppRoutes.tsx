@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { ROUTES } from '../constants/routes';
 import { LoginPage } from '../pages/Login/LoginPage';
+import SignupPage from '../pages/signup/SignupPage';
 import { DashboardPage } from '../pages/Dashboard/DashboardPage';
 import { DoctorDashboardPage } from '../pages/Doctor/DoctorDashboardPage';
 import { WorkspacePage } from '../pages/Workspace/WorkspacePage';
@@ -21,6 +22,7 @@ export function AppRoutes() {
     <BrowserRouter>
       <Routes>
         <Route path={ROUTES.LOGIN} element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route path={ROUTES.WORKSPACE} element={protectedRoute(<WorkspacePage />)} />
         <Route path={ROUTES.DASHBOARD} element={protectedRoute(<DashboardPage />)} />
         <Route path={ROUTES.PROFILE} element={protectedRoute(<ProfilePage />)} />

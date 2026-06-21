@@ -27,14 +27,14 @@ function TopHeaderComponent({
   const isMinimal = variant === 'minimal';
 
   return (
-    <header className="app-top-header shrink-0 px-4 py-4 sm:px-6 lg:px-8">
-      <div className="flex items-center justify-between gap-3">
+    <header className="app-top-header shrink-0 px-3 py-3 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between gap-2 sm:gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <MobileMenuButton onClick={onOpenMobileMenu} />
 
           {!isMinimal ? (
             <div className="min-w-0 lg:block">
-              <h1 className="truncate text-lg font-bold text-navy lg:text-2xl">
+              <h1 className="truncate text-base font-bold text-navy sm:text-lg lg:text-2xl">
                 {greeting}, {greetingName} 👋
               </h1>
               <p className="hidden text-sm text-slate-500 sm:block">
@@ -59,7 +59,7 @@ function TopHeaderComponent({
 
           <Link
             to={ROUTES.NOTIFICATIONS}
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/80 bg-white/80 text-navy shadow-sm backdrop-blur-md transition hover:bg-white"
+            className="relative inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200/80 bg-white/80 text-navy shadow-sm backdrop-blur-md transition hover:bg-white"
             aria-label={`Notifications${unreadNotificationCount ? `, ${unreadNotificationCount} unread` : ''}`}
           >
             <Bell size={18} aria-hidden="true" />
@@ -70,15 +70,15 @@ function TopHeaderComponent({
             ) : null}
           </Link>
 
-          <Link to={ROUTES.PROFILE} className="app-user-chip transition hover:bg-white">
+          <Link to={ROUTES.PROFILE} className="app-user-chip min-w-0 transition hover:bg-white">
             <PatientAvatar initials={user.avatarInitials} size="sm" />
-            <div className="hidden min-w-0 sm:block">
+            <div className="hidden min-w-0 md:block">
               <p className="truncate text-sm font-semibold text-navy">
                 {user.firstName} {user.lastName}
               </p>
               <p className="truncate text-xs capitalize text-slate-500">{user.role}</p>
             </div>
-            <ChevronDown size={16} className="hidden text-slate-400 sm:block" aria-hidden="true" />
+            <ChevronDown size={16} className="hidden text-slate-400 md:block" aria-hidden="true" />
           </Link>
         </div>
       </div>

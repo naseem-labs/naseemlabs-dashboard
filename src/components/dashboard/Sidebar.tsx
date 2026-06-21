@@ -56,39 +56,60 @@ function SidebarComponent({
       <aside
         className={`app-sidebar fixed inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 ease-in-out ${
           isMobile
-            ? `w-72 shadow-2xl ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`
+            ? `w-[85vw] max-w-[320px] shadow-2xl ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}`
             : collapsed
-              ? 'w-20 translate-x-0'
+              ? 'w-16 translate-x-0'
               : 'w-64 translate-x-0'
         }`}
         aria-label="Main navigation"
         aria-hidden={isMobile && !isMobileOpen}
       >
         <div
-          className={`border-b border-white/60 ${
+          className={`sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-white/60 ${
             collapsed && !isMobile
               ? 'flex flex-col items-center gap-2 px-2 py-4'
               : 'flex items-center justify-between px-4 py-5'
           }`}
         >
-          <ClinicLogo
-            clinic={clinic}
-            collapsed={collapsed && !isMobile}
-            showName={!collapsed || isMobile}
-            variant="light"
-          />
+          <NavLink to={ROUTES.DASHBOARD} onClick={onCloseMobile}>
+            <ClinicLogo
+              clinic={clinic}
+              collapsed={collapsed && !isMobile}
+              showName={isMobile || !collapsed}
+              variant="light"
+            />
+          </NavLink>
 
-          <button
-            type="button"
-            onClick={isMobile ? onCloseMobile : onToggleCollapse}
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white/60 hover:text-navy"
-            aria-label={isMobile ? 'Close menu' : collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {isMobile ? <X size={18} /> : collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          </button>
+          {isMobile && (
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-white/60 hover:text-navy"
+              aria-label="Close menu"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
 
-        <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Dashboard navigation">
+        <nav
+          onMouseEnter={() => {
+            if (!isMobile && collapsed) {
+              onToggleCollapse();
+            }
+          }}
+          onMouseLeave={() => {
+            if (!isMobile && !collapsed) {
+              onToggleCollapse();
+            }
+          }}
+          className={`flex-1 overflow-y-auto px-3 ${
+            collapsed && !isMobile
+              ? 'flex flex-col items-center gap-4 py-6'
+              : 'space-y-1 py-4'
+          }`}
+          aria-label="Dashboard navigation"
+        >
           {SIDEBAR_NAV_ITEMS.map((item) => {
             const Icon = item.icon;
 
@@ -166,7 +187,7 @@ export function MobileMenuButton({ onClick }: { onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200/80 bg-white/80 text-navy shadow-sm backdrop-blur-md lg:hidden"
+      className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200/80 bg-white/80 text-navy shadow-sm backdrop-blur-md lg:hidden"
       aria-label="Open navigation menu"
     >
       <Menu size={18} />

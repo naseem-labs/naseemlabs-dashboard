@@ -1,0 +1,144 @@
+.workspace-brand {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 4vw, 2.5rem);
+}
+
+.workspace-brand__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.workspace-brand__logo-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #7c5cff 0%, #6347d1 100%);
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(99, 71, 209, 0.28);
+}
+
+.workspace-brand__logo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.workspace-brand__logo-name {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.workspace-brand__logo-tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.workspace-brand__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.workspace-brand__heading {
+  margin: 0;
+  font-size: clamp(1.625rem, 3.4vw, 2.25rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--color-navy);
+}
+
+.workspace-brand__description {
+  margin: 0;
+  max-width: 26rem;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.workspace-brand__features {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workspace-brand__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+}
+
+.workspace-brand__feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  background: rgba(99, 71, 209, 0.1);
+  color: var(--color-purple);
+}
+
+.workspace-brand__feature-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.1rem;
+  min-width: 0;
+}
+
+.workspace-brand__feature-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+.workspace-brand__feature-description {
+  max-width: 18rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 900px) {
+  .workspace-brand {
+    align-items: center;
+    text-align: center;
+  }
+
+  .workspace-brand__intro,
+  .workspace-brand__description {
+    max-width: 100%;
+  }
+
+  .workspace-brand__features {
+    width: 100%;
+    max-width: 26rem;
+    margin: 0 auto;
+  }
+
+  .workspace-brand__feature {
+    text-align: left;
+  }
+}
+
+@media (max-width: 414px) {
+  .workspace-brand {
+    gap: 1.5rem;
+  }
+}

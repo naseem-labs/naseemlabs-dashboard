@@ -32,7 +32,7 @@ export function NotificationsPage() {
       user={data.user}
       unreadNotificationCount={unreadCount}
     >
-      <div className="mx-auto h-full max-w-4xl overflow-y-auto">
+      <div className="h-full w-full overflow-y-auto">
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-navy">Notifications</h1>
           <p className="mt-1 text-sm text-slate-500">

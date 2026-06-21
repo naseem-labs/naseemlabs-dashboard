@@ -1,5 +1,5 @@
 import type { AuthResponse, AuthSession, LoginCredentials } from '../types';
-import { isSupabaseConfigured } from '../lib/supabase';
+import { getSupabaseClient, isSupabaseConfigured } from '../lib/supabase';
 import { storageService } from './storage.service';
 import { findOrCreateSupabaseUser } from './supabase/auth.service';
 import { splitPatientName } from './supabase/mappers';
@@ -97,6 +97,78 @@ export const authService = {
     }
   },
 
+  async signUp(name: string, email: string, password: string): Promise<AuthResponse> {
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+
+    if (!trimmedName) {
+      return { success: false, error: 'Name is required.' };
+    }
+
+    if (!trimmedEmail) {
+      return { success: false, error: 'Email is required.' };
+    }
+
+    if (!isValidEmail(trimmedEmail)) {
+      return { success: false, error: 'Please enter a valid email address.' };
+    }
+
+    if (!password || password.length < 6) {
+      return { success: false, error: 'Password must be at least 6 characters.' };
+    }
+
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Supabase is not configured.' };
+    }
+
+    try {
+      const supabase = getSupabaseClient();
+
+      const { data, error } = await supabase.auth.signUp({
+        email: trimmedEmail,
+        password,
+        options: {
+          data: {
+            name: trimmedName,
+          },
+        },
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      const dbUser = await findOrCreateSupabaseUser(trimmedEmail, trimmedName);
+
+      const session = buildSession(
+        {
+          email: trimmedEmail,
+          password,
+          rememberMe: true,
+        },
+        {
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          clinicId: dbUser.clinic_id,
+          role: dbUser.role,
+        },
+      );
+
+      storageService.set(session, true);
+
+      return {
+        success: true,
+        session,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unable to create account.',
+      };
+    }
+  },
+
   getSession(): AuthSession | null {
     const localSession = storageService.get<AuthSession>(true);
     const sessionSession = storageService.get<AuthSession>(false);
@@ -159,5 +231,96 @@ export const authService = {
   async validateToken(_token: string): Promise<boolean> {
     const session = this.getSession();
     return session?.accessToken === _token && !isSessionExpired(session);
+  },
+
+  async loginWithGoogle(): Promise<AuthResponse> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Supabase is not configured.' };
+    }
+
+    try {
+      const supabase = getSupabaseClient();
+      const redirectTo = `${window.location.origin}/reset-password`;
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo,
+          queryParams: { access_type: 'offline', prompt: 'consent' },
+        },
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      // OAuth redirects the browser — success is handled on return
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unable to sign in with Google.',
+      };
+    }
+  },
+
+  async sendPasswordReset(email: string): Promise<AuthResponse> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Supabase is not configured.' };
+    }
+
+    const trimmed = email.trim().toLowerCase();
+
+    if (!trimmed) {
+      return { success: false, error: 'Email is required.' };
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      return { success: false, error: 'Enter a valid email address.' };
+    }
+
+    try {
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.resetPasswordForEmail(trimmed, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unable to send reset email.',
+      };
+    }
+  },
+
+  async updatePassword(newPassword: string): Promise<AuthResponse> {
+    if (!isSupabaseConfigured()) {
+      return { success: false, error: 'Supabase is not configured.' };
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      return { success: false, error: 'Password must be at least 8 characters.' };
+    }
+
+    try {
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unable to update password.',
+      };
+    }
   },
 };

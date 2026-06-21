@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import { BACKGROUND_IMAGE_URL } from '../../constants/assets';
 import type { DashboardUser } from '../../types/dashboard';
 import { SidebarProvider, useSidebar } from '../../hooks/useSidebar';
 import { Sidebar } from './Sidebar';
@@ -49,16 +48,11 @@ function DashboardLayoutContent({
       : 'lg:ml-64';
 
   return (
-    <div className={`app-shell ${isMobile ? 'min-h-screen' : 'h-screen overflow-hidden'}`}>
-      <img
-        className="app-shell__background"
-        src={BACKGROUND_IMAGE_URL}
-        alt=""
-        aria-hidden="true"
-        decoding="async"
-      />
-      <div className="app-shell__overlay" aria-hidden="true" />
-
+    <div
+      className={`app-shell bg-slate-50 ${
+        isMobile ? 'min-h-screen' : 'h-screen overflow-hidden'
+      }`}
+    >
       <div className={`app-shell__content ${isMobile ? 'min-h-screen' : 'h-screen'}`}>
         <Sidebar
           clinic={clinic}
@@ -71,7 +65,7 @@ function DashboardLayoutContent({
         />
 
         <div
-          className={`flex flex-col transition-[margin] duration-300 ease-in-out ${sidebarOffset} ${
+          className={`flex flex-col bg-slate-50 transition-[margin] duration-300 ease-in-out ${sidebarOffset} ${
             isMobile ? 'min-h-screen' : 'h-screen overflow-hidden'
           }`}
         >
@@ -91,22 +85,20 @@ function DashboardLayoutContent({
           )}
 
           <main
-            className={`flex flex-1 flex-col px-4 py-4 sm:px-6 lg:px-8 ${
+            className={`flex flex-1 flex-col bg-slate-50 px-3 py-3 sm:px-3 lg:px-4 xl:px-4 ${
               isMobile || scrollableMain
                 ? 'overflow-y-auto'
                 : 'min-h-0 overflow-hidden'
             }`}
           >
-            {children}
+            <div
+              className="flex w-full max-w-none flex-1 flex-col"
+            >
+              {children}
+            </div>
           </main>
 
-          {!hideFooter ? (
-            <footer className="shrink-0 border-t border-white/50 bg-white/35 px-4 py-3 backdrop-blur-md sm:px-6 lg:px-8">
-              <p className="text-center text-xs text-slate-600">
-                Your data is secure and private.
-              </p>
-            </footer>
-          ) : null}
+          {null}
         </div>
       </div>
     </div>

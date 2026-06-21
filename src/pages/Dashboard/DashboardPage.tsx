@@ -4,6 +4,7 @@ import {
   DashboardStats,
   Filters,
   PatientActivityTable,
+  RecentActivity,
 } from '../../components/dashboard';
 import { DataLoadErrorScreen } from '../../components/common';
 import { useDashboard, useLeadFilters } from '../../hooks/useDashboard';
@@ -63,8 +64,8 @@ export function DashboardPage() {
       unreadNotificationCount={unreadCount}
     >
       <div
-        className={`app-page flex flex-col gap-4 ${
-          isDesktop ? 'h-full overflow-hidden' : ''
+        className={`app-page flex flex-col gap-3 sm:gap-4 ${
+          isDesktop ? 'h-full min-h-0 overflow-hidden' : 'pb-4'
         }`}
       >
         <div className="shrink-0">
@@ -87,21 +88,39 @@ export function DashboardPage() {
           </div>
 
           <div
-            ref={tableContainerRef}
-            className={isDesktop ? 'min-h-0 flex-1 overflow-hidden' : ''}
+            className={
+              isDesktop
+                ? 'grid min-h-0 flex-1 w-full grid-cols-[minmax(0,1fr)_360px] gap-3 items-start overflow-hidden'
+                : 'flex flex-col gap-3'
+            }
           >
-            <PatientActivityTable
-              leads={paginatedLeads}
-              page={page}
-              pageSize={pageSize}
-              totalCount={totalCount}
-              totalPages={totalPages}
-              fixedRowCount={isDesktop ? pageSize : undefined}
-              isDesktopLayout={isDesktop}
-              onPageChange={goToPage}
-              onViewLead={viewLead}
-              onNextAction={handleNextActionClick}
-            />
+            <div
+              ref={tableContainerRef}
+              className={isDesktop ? 'min-h-0 w-full overflow-hidden' : ''}
+            >
+              <PatientActivityTable
+                leads={paginatedLeads}
+                page={page}
+                pageSize={pageSize}
+                totalCount={totalCount}
+                totalPages={totalPages}
+                fixedRowCount={isDesktop ? pageSize : undefined}
+                isDesktopLayout={isDesktop}
+                onPageChange={goToPage}
+                onViewLead={viewLead}
+                onNextAction={handleNextActionClick}
+              />
+            </div>
+
+            <div
+              className={
+                isDesktop
+                  ? 'min-h-0 w-full overflow-hidden'
+                  : 'w-full'
+              }
+            >
+              <RecentActivity />
+            </div>
           </div>
         </div>
       </div>

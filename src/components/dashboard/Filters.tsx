@@ -25,14 +25,14 @@ function FiltersComponent({
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div>
-        <h2 className="text-lg font-semibold text-navy">All Active Leads</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="text-base sm:text-lg font-semibold text-navy">All Active Leads</h2>
+        <p className="text-xs sm:text-sm text-slate-500">
           Track patient inquiries and take the next best action.
         </p>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <label className="relative min-w-0 flex-1 sm:min-w-[14rem] sm:flex-none sm:w-56">
+      <div className="flex w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center lg:w-auto">
+        <label className="relative w-full min-w-0 flex-1 sm:min-w-[14rem] sm:flex-none sm:w-56">
           <Search
             size={16}
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -51,7 +51,7 @@ function FiltersComponent({
         <select
           value={stage}
           onChange={(event) => onStageChange(event.target.value as LeadStage | 'all')}
-          className="rounded-lg border border-slate-200/80 bg-white/90 px-3 py-2.5 text-sm font-medium text-navy shadow-sm outline-none transition focus:border-purple-300 focus:ring-4 focus:ring-purple-100"
+          className="w-full sm:w-auto rounded-lg border border-slate-200/80 bg-white/90 px-3 py-2.5 text-sm font-medium text-navy shadow-sm outline-none transition focus:border-purple-300 focus:ring-4 focus:ring-purple-100"
           aria-label="Filter by stage"
         >
           {STAGE_FILTER_OPTIONS.map((option) => (
@@ -64,7 +64,7 @@ function FiltersComponent({
         <button
           type="button"
           onClick={onFilterClick}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy shadow-sm transition hover:border-slate-300"
+          className="inline-flex h-11 w-full sm:w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-navy shadow-sm transition hover:border-slate-300"
           aria-label="Open advanced filters"
         >
           <Filter size={16} aria-hidden="true" />
@@ -74,7 +74,7 @@ function FiltersComponent({
           <button
             type="button"
             onClick={onClearFilters}
-            className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-navy"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-600 shadow-sm transition hover:border-slate-300 hover:text-navy"
           >
             <X size={14} aria-hidden="true" />
             Clear Filters

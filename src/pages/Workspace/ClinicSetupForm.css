@@ -1,0 +1,78 @@
+.clinic-setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.clinic-setup-form__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.clinic-setup-form__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-navy);
+}
+
+.clinic-setup-form__input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.95rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 0.875rem;
+  background: #ffffff;
+}
+
+.clinic-setup-form__input-icon {
+  flex-shrink: 0;
+  color: var(--color-purple);
+}
+
+.clinic-setup-form__input-icon--whatsapp {
+  color: #22c55e;
+}
+
+.clinic-setup-form__input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.85rem 0;
+  border: none;
+  background: transparent;
+  font-size: 0.9375rem;
+  color: var(--color-navy);
+}
+
+.clinic-setup-form__input::placeholder {
+  color: #94a3b8;
+}
+
+.clinic-setup-form__input:focus {
+  outline: none;
+}
+
+.clinic-setup-form__input--error {
+  color: #b91c1c;
+}
+
+.clinic-setup-form__input-wrap:has(.clinic-setup-form__input--error) {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.clinic-setup-form__input:read-only {
+  color: #475569;
+}
+
+.clinic-setup-form__error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #dc2626;
+}
+
+@media (max-width: 414px) {
+  .clinic-setup-form {
+    gap: 1rem;
+  }
+}

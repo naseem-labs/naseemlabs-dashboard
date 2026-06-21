@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import type { KpiStat } from '../../types/dashboard';
 import { leadsWithStagePath } from '../../constants/routes';
 
@@ -40,46 +40,36 @@ function DashboardStatsComponent({ stats }: DashboardStatsProps) {
 
   return (
     <section
-      className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
+      className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:gap-4 xl:grid-cols-4"
       aria-label="Dashboard statistics"
     >
       {stats.map((stat) => {
         const styles = accentStyles[stat.accent];
-        const TrendIcon = stat.trend.direction === 'down' ? ArrowDown : ArrowUp;
-        const trendColor =
-          stat.trend.direction === 'down' ? 'text-red-500' : 'text-green-600';
 
         return (
           <button
             key={stat.id}
             type="button"
             onClick={() => handleClick(stat)}
-            className={`group app-glass-card app-glass-card--solid flex items-start justify-between p-5 text-left transition-all duration-250 hover:-translate-y-0.5 hover:ring-4 ${styles.ring}`}
+            className={`group flex w-full min-h-[105px] items-start justify-between rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 text-left shadow-sm transition-all duration-250 hover:-translate-y-1 hover:shadow-lg hover:ring-4 ${styles.ring}`}
             aria-label={`${stat.label}: ${stat.count}. Click to filter leads.`}
           >
-            <div className="space-y-3">
+            <div className="flex h-full flex-1 flex-col justify-between">
               <div
-                className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${styles.icon}`}
+                className={`inline-flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl ${styles.icon}`}
                 aria-hidden="true"
               >
-                <span className="text-lg font-bold">{stat.count}</span>
+                <span className="text-lg sm:text-xl font-bold">{stat.count}</span>
               </div>
 
               <div>
-                <p className="text-sm font-semibold text-navy">{stat.label}</p>
-                <p className="mt-0.5 text-xs text-slate-500">{stat.subtitle}</p>
-              </div>
-
-              <div className={`inline-flex items-center gap-1 text-xs font-medium ${trendColor}`}>
-                <TrendIcon size={12} aria-hidden="true" />
-                <span>
-                  {stat.trend.value}% {stat.trend.label}
-                </span>
+                <p className="text-base font-semibold text-slate-900">{stat.label}</p>
+                <p className="mt-1 text-xs text-slate-500">{stat.subtitle}</p>
               </div>
             </div>
 
             <span
-              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-white transition group-hover:scale-105 ${styles.button}`}
+              className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-white transition group-hover:scale-110 ${styles.button}`}
               aria-hidden="true"
             >
               <ArrowRight size={14} />
