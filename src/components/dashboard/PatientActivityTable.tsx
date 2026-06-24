@@ -188,10 +188,6 @@ const TablePagination = memo(function TablePagination({
       className="flex shrink-0 flex-col gap-3 px-3 py-3 sm:px-5"
       style={{ minHeight: TABLE_LAYOUT.PAGINATION_HEIGHT }}
     >
-      <p className="text-xs text-slate-500 lg:text-sm">
-        Showing {start} to {end} of {totalCount} leads
-      </p>
-
       <div className="flex items-center justify-between gap-2">
         <button
           type="button"
@@ -247,7 +243,7 @@ function PatientActivityTableComponent({
   pageSize,
   totalCount,
   totalPages,
-  fixedRowCount,
+  fixedRowCount = 5,
   isDesktopLayout = false,
   onPageChange,
   onViewLead,

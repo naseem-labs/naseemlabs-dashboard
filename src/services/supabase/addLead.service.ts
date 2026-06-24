@@ -55,7 +55,7 @@ export async function createLeadInSupabase(
   const profilePayload = {
     lead_id: lead.id,
     affected_area: mapConcernAreaToProfileText(input.concernArea),
-    patient_concern: input.note.trim() || null,
+    lead_context: input.note.trim() || null,
     location: input.city.trim() || null,
     next_action: 'Start Follow Up',
   };

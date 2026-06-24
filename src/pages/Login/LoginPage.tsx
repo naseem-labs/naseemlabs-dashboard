@@ -47,11 +47,11 @@ export function LoginPage() {
       return;
     }
 
-    navigate(ROUTES.WORKSPACE, { replace: true });
+    navigate(ROUTES.DASHBOARD, { replace: true });
   };
 
   const handleContinue = () => {
-    navigate(ROUTES.WORKSPACE, { replace: true });
+    navigate(ROUTES.DASHBOARD, { replace: true });
   };
 
   return (

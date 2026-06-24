@@ -7,6 +7,7 @@ export type NotificationType =
 
 export interface AppNotification {
   id: string;
+  leadId?: string;
   type: NotificationType;
   title: string;
   message: string;

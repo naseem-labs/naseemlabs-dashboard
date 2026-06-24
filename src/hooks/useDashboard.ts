@@ -71,7 +71,7 @@ export function useDashboard() {
 export function useLeadFilters(
   leads: DashboardData['leads'] | undefined,
   initialStage: LeadStage | 'all' = 'all',
-  pageSize: number = 6,
+  pageSize: number = 5,
 ) {
   const [filters, setFilters] = useState<LeadFilters>({
     search: '',

@@ -34,7 +34,7 @@ export function useWorkspacePage() {
   );
 
   const isSetupComplete = useMemo(() => isClinicSetupComplete(clinic), [clinic]);
-  const isReadOnly = isSetupComplete;
+  const isReadOnly = false;
 
   useEffect(() => {
     let isMounted = true;

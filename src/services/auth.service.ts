@@ -77,8 +77,25 @@ export const authService = {
     }
 
     try {
-      const displayName = email.split('@')[0].replace(/[._-]/g, ' ');
-      const dbUser = await findOrCreateSupabaseUser(email, displayName);
+      const supabase = getSupabaseClient();
+
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError || !authData.user) {
+        return {
+          success: false,
+          error: authError?.message || 'Invalid email or password.',
+        };
+      }
+
+      const dbUser = await findOrCreateSupabaseUser(
+        authData.user.email ?? email,
+        (authData.user.user_metadata?.name as string) || email.split('@')[0],
+      );
+
       const session = buildSession(credentials, {
         id: dbUser.id,
         email: dbUser.email,

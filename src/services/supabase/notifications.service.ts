@@ -15,7 +15,21 @@ export async function fetchSupabaseNotifications(): Promise<AppNotification[] | 
 
   const { data, error } = await supabase
     .from('notifications')
-    .select('*')
+    .select(`
+      *,
+      leads (
+        id,
+        name,
+        phone,
+        stage,
+        lead_profile (
+          patient_concern,
+          next_action,
+          ai_summary,
+          lead_context
+        )
+      )
+    `)
     .eq('clinic_id', context.clinicId)
     .order('created_at', { ascending: false });
 
@@ -23,14 +37,34 @@ export async function fetchSupabaseNotifications(): Promise<AppNotification[] | 
     throw new Error(error.message);
   }
 
-  return ((data ?? []) as DbNotification[]).map((row) => ({
-    id: row.id,
-    type: row.type === 'new_lead' ? 'new_lead' : row.type === 'doctor_review' ? 'doctor_review' : 'system',
-    title: row.type.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase()),
-    message: row.type.replace(/_/g, ' '),
-    createdAt: row.created_at ?? new Date().toISOString(),
-    read: Boolean(row.is_read),
-  }));
+  return ((data ?? []) as any[]).map((row) => {
+    const lead = Array.isArray(row.leads) ? row.leads[0] : row.leads;
+
+    const profile = Array.isArray(lead?.lead_profile)
+      ? lead.lead_profile[0]
+      : lead?.lead_profile;
+
+    const concern = profile?.patient_concern;
+    const nextAction = profile?.next_action;
+
+    return {
+      id: row.id,
+      leadId: lead?.id,
+      type: row.type === 'new_lead' ? 'new_lead' : row.type === 'doctor_review' ? 'doctor_review' : 'system',
+      title: lead?.name || row.title || 'Unknown Patient',
+      message:
+        row.message ||
+        [
+          lead?.phone,
+          concern ? `Concern: ${concern}` : null,
+          nextAction ? `Next: ${nextAction}` : null,
+        ]
+          .filter(Boolean)
+          .join(' • '),
+      createdAt: row.created_at ?? new Date().toISOString(),
+      read: Boolean(row.is_read),
+    };
+  });
 }
 
 export async function markNotificationRead(notificationId: string): Promise<void> {

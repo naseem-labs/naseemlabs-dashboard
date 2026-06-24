@@ -14,7 +14,8 @@ import type { Lead } from '../../types/dashboard';
 
 export function DashboardPage() {
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const { pageSize, isDesktop } = useTablePageSize(tableContainerRef);
+  const { isDesktop } = useTablePageSize(tableContainerRef);
+  const pageSize = 5;
   const { data, isLoading, error, reload } = useDashboard();
   const { unreadCount } = useNotifications();
   const { viewLead, handleNextAction } = useLeadWorkflow();

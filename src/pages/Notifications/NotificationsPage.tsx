@@ -4,8 +4,11 @@ import { NOTIFICATION_TYPE_CONFIG } from '../../constants/notifications';
 import { formatDisplayDate } from '../../hooks/useDashboard';
 import { useDashboard } from '../../hooks/useDashboard';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useNavigate } from 'react-router-dom';
+import { markNotificationRead } from '../../services/supabase/notifications.service';
 
 export function NotificationsPage() {
+  const navigate = useNavigate();
   const { data, isLoading: dashboardLoading, error: dashboardError } = useDashboard();
   const { unread, read, unreadCount, isLoading, error } = useNotifications();
 
@@ -40,8 +43,18 @@ export function NotificationsPage() {
           </p>
         </div>
 
-        <NotificationSection title="Unread" items={unread} emptyMessage="No unread notifications." />
-        <NotificationSection title="Read" items={read} emptyMessage="No read notifications." />
+        <NotificationSection
+          title="Unread"
+          items={unread}
+          emptyMessage="No unread notifications."
+          onOpenLead={(leadId) => navigate(`/leads/${leadId}`)}
+        />
+        <NotificationSection
+          title="Read"
+          items={read}
+          emptyMessage="No read notifications."
+          onOpenLead={(leadId) => navigate(`/leads/${leadId}`)}
+        />
       </div>
     </DashboardLayout>
   );
@@ -51,9 +64,10 @@ interface NotificationSectionProps {
   title: string;
   items: ReturnType<typeof useNotifications>['unread'];
   emptyMessage: string;
+  onOpenLead: (leadId: string) => void;
 }
 
-function NotificationSection({ title, items, emptyMessage }: NotificationSectionProps) {
+function NotificationSection({ title, items, emptyMessage, onOpenLead }: NotificationSectionProps) {
   return (
     <section className="mb-6 rounded-2xl border border-slate-200/80 bg-white shadow-sm">
       <div className="border-b border-slate-100 px-5 py-4">
@@ -68,7 +82,17 @@ function NotificationSection({ title, items, emptyMessage }: NotificationSection
             const typeConfig = NOTIFICATION_TYPE_CONFIG[item.type];
 
             return (
-              <li key={item.id} className="px-5 py-4">
+              <li
+                key={item.id}
+                className="cursor-pointer px-5 py-4 transition-colors hover:bg-slate-50"
+                onClick={async () => {
+                  await markNotificationRead(item.id);
+
+                  if (item.leadId) {
+                    onOpenLead(item.leadId);
+                  }
+                }}
+              >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap items-center gap-2">
