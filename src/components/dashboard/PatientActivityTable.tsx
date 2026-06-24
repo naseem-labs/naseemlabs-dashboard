@@ -175,8 +175,8 @@ interface TablePaginationProps {
 
 const TablePagination = memo(function TablePagination({
   page,
-  pageSize,
-  totalCount,
+  pageSize: _pageSize,
+  totalCount: _totalCount,
   totalPages,
   onPageChange,
 }: TablePaginationProps) {
