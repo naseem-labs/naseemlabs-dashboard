@@ -19,7 +19,7 @@ export function PhotosCard({ photos }: PhotosCardProps) {
         </span>
       }
     >
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {photos.map((photo) => {
           const statusConfig = PHOTO_STATUS_CONFIG[photo.status];
 
@@ -28,7 +28,7 @@ export function PhotosCard({ photos }: PhotosCardProps) {
               key={photo.id}
               className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50"
             >
-              <div className="flex aspect-[4/3] items-center justify-center bg-slate-100">
+              <div className="flex aspect-[16/10] min-h-[160px] items-center justify-center bg-slate-100 sm:aspect-[4/3] sm:min-h-0">
                 {photo.storageUrl ? (
                   <img
                     src={photo.storageUrl}
@@ -42,7 +42,7 @@ export function PhotosCard({ photos }: PhotosCardProps) {
                 )}
               </div>
               <div className="flex items-center justify-between gap-2 p-2.5">
-                <p className="text-xs font-semibold text-navy">{photo.label}</p>
+                <p className="text-sm font-semibold text-navy">{photo.label}</p>
                 <span
                   className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${statusConfig.className}`}
                 >

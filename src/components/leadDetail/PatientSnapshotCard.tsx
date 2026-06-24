@@ -18,13 +18,18 @@ export function PatientSnapshotCard({ snapshot }: PatientSnapshotCardProps) {
     <LeadDetailCard title="Patient Snapshot">
       <dl className="space-y-2.5">
         {SNAPSHOT_FIELDS.map((field) => (
-          <div key={field.key} className="flex items-start justify-between gap-3 text-sm">
+          <div
+            key={field.key}
+            className="flex flex-col gap-1 text-sm sm:flex-row sm:items-start sm:justify-between sm:gap-3"
+          >
             <dt className="font-medium text-slate-500">{field.label}</dt>
-            <dd className="text-right font-semibold text-navy">{snapshot[field.key]}</dd>
+            <dd className="break-all text-left font-semibold text-navy sm:text-right">
+              {snapshot[field.key]}
+            </dd>
           </div>
         ))}
 
-        <div className="rounded-xl border border-orange-100 bg-orange-50/60 p-3">
+        <div className="rounded-xl border border-orange-100 bg-orange-50/60 p-2.5 sm:p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-orange-700">
             Best Next Step
           </p>

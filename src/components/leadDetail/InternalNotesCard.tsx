@@ -65,9 +65,9 @@ export function InternalNotesCard({ notes, onUpdate, onDelete }: InternalNotesCa
                 </div>
               ) : (
                 <>
-                  <p className="text-sm text-navy">{note.content}</p>
+                  <p className="break-all text-sm text-navy">{note.content}</p>
                   <div className="mt-2 flex items-center justify-between gap-2">
-                    <p className="text-xs text-slate-500">
+                    <p className="min-w-0 break-words text-xs text-slate-500">
                       {note.authorName} · {formatDisplayDate(note.createdAt)}
                     </p>
                     <div className="flex gap-1">

@@ -32,8 +32,15 @@ export function LoginPage() {
   const [isAlreadySignedIn, setIsAlreadySignedIn] = useState(false);
 
   useEffect(() => {
-    setIsAlreadySignedIn(authService.isAuthenticated());
-  }, []);
+    const authenticated = authService.isAuthenticated();
+
+    if (authenticated) {
+      navigate(ROUTES.DASHBOARD, { replace: true });
+      return;
+    }
+
+    setIsAlreadySignedIn(false);
+  }, [navigate]);
 
   const handleLogin = async (credentials: LoginCredentials) => {
     setIsLoading(true);
