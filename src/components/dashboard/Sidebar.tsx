@@ -1,8 +1,6 @@
 import { memo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
-  ChevronLeft,
-  ChevronRight,
   Headphones,
   LogOut,
   Menu,

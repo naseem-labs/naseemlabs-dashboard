@@ -2,7 +2,6 @@ import type { AppNotification } from '../../types/notification';
 import { isSupabaseConfigured, getSupabaseClient } from '../../lib/supabase';
 import { resolveWorkspaceContext } from './clinicContext';
 import { authService } from '../auth.service';
-import type { DbNotification } from './types';
 
 export async function fetchSupabaseNotifications(): Promise<AppNotification[] | null> {
   if (!isSupabaseConfigured()) {

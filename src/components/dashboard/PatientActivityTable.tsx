@@ -180,8 +180,6 @@ const TablePagination = memo(function TablePagination({
   totalPages,
   onPageChange,
 }: TablePaginationProps) {
-  const start = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
-  const end = Math.min(page * pageSize, totalCount);
 
   return (
     <div

@@ -29,7 +29,6 @@ function DashboardLayoutContent({
   unreadNotificationCount = 0,
   children,
   renderHeader,
-  hideFooter = false,
   scrollableMain = false,
   headerVariant = 'dashboard',
 }: DashboardLayoutProps) {
