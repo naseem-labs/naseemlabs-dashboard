@@ -10,7 +10,7 @@ interface BasicInformationSectionProps {
 }
 
 const fieldClassName =
-  'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-navy shadow-sm transition focus:border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-100';
+  'w-full max-w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-navy shadow-sm transition focus:border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-100';
 
 const labelClassName = 'mb-1.5 block text-sm font-medium text-navy';
 
@@ -21,8 +21,8 @@ export function BasicInformationSection({
 }: BasicInformationSectionProps) {
   return (
     <FormSectionCard title="1. Basic Information" icon={UserRound}>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="sm:col-span-2 lg:col-span-1">
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1">
           <label className={labelClassName} htmlFor="patient-name">
             Patient Name <span className="text-red-500">*</span>
           </label>
@@ -39,7 +39,7 @@ export function BasicInformationSection({
           ) : null}
         </div>
 
-        <div className="sm:col-span-2 lg:col-span-1">
+        <div className="min-w-0 sm:col-span-2 lg:col-span-1">
           <label className={labelClassName} htmlFor="patient-phone">
             Phone / WhatsApp <span className="text-red-500">*</span>
           </label>
@@ -62,7 +62,7 @@ export function BasicInformationSection({
           {errors.phone ? <p className="mt-1 text-xs text-red-600">{errors.phone}</p> : null}
         </div>
 
-        <div>
+        <div className="min-w-0">
           <label className={labelClassName} htmlFor="patient-city">
             City
           </label>
@@ -76,7 +76,7 @@ export function BasicInformationSection({
           />
         </div>
 
-        <div>
+        <div className="min-w-0">
           <label className={labelClassName} htmlFor="lead-source">
             Lead Source <span className="text-red-500">*</span>
           </label>
