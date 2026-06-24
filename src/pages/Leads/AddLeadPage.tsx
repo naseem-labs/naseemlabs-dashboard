@@ -28,7 +28,7 @@ export function AddLeadPage() {
   }
 
   if (error) {
-    return <DataLoadErrorScreen error={error} fallbackMessage="Unable to load add lead page." />;
+    return <DataLoadErrorScreen error={error} fallbackMessage="Unable to load add Patient page." />;
   }
 
   return <AddLeadPageContent data={data} unreadCount={unreadCount} />;

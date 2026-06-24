@@ -25,7 +25,7 @@ function FiltersComponent({
   return (
     <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div>
-        <h2 className="text-base sm:text-lg font-semibold text-navy">All Active Leads</h2>
+        <h2 className="text-base sm:text-lg font-semibold text-navy">All Active Patient</h2>
         <p className="text-xs sm:text-sm text-slate-500">
           Track patient inquiries and take the next best action.
         </p>
@@ -42,9 +42,9 @@ function FiltersComponent({
             type="search"
             value={search}
             onChange={(event) => onSearchChange(event.target.value)}
-            placeholder="Search by name or phone..."
+            placeholder="Search by name..."
             className="w-full rounded-lg border border-slate-200/80 bg-white/90 py-2.5 pl-9 pr-3 text-sm text-navy shadow-sm outline-none transition placeholder:text-slate-400 focus:border-purple-300 focus:ring-4 focus:ring-purple-100"
-            aria-label="Search leads by name or phone"
+            aria-label="Search leads by name"
           />
         </label>
 

@@ -77,7 +77,7 @@ export function AddLeadPageHeader({
 
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-navy sm:text-2xl">
-              Add New Lead
+              Add New Patient
             </h1>
             <p className="mt-1 text-sm text-slate-500">
               Create a new patient inquiry and start follow-up.

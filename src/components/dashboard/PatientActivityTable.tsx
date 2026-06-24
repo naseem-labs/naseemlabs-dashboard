@@ -49,9 +49,14 @@ function LastActivityCell({ activity }: { activity: LastActivity }) {
   return (
     <div className="flex items-start gap-2">
       <Icon size={14} className="mt-0.5 shrink-0 text-slate-400" aria-hidden="true" />
-      <div>
+      <div className="min-w-0">
         <p className="text-sm font-medium text-navy">{activity.label}</p>
-        <p className="text-xs text-slate-500">{activity.description}</p>
+        <p
+          className="max-w-[280px] truncate text-xs text-slate-500"
+          title={activity.description}
+        >
+          {activity.description}
+        </p>
       </div>
     </div>
   );
@@ -85,7 +90,7 @@ const TableRows = memo(function TableRows({
           colSpan={6}
           className="h-[400px] px-5 py-6 text-center text-sm text-slate-500 align-middle"
         >
-          No leads match your current filters.
+          No patients match your current filters.
         </td>
       </tr>
     );
@@ -141,7 +146,7 @@ const TableRows = memo(function TableRows({
                 onClick={() => onViewLead(lead.id)}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-100"
               >
-                View Lead
+                View Patient
                 <ArrowRight size={14} aria-hidden="true" />
               </button>
             </td>
@@ -260,7 +265,7 @@ function PatientActivityTableComponent({
       aria-label="Patient activity table"
     >
       <div className={`hidden w-full lg:block ${isDesktopLayout ? 'min-h-0 flex-1 overflow-auto' : 'overflow-x-auto min-h-[540px]'}`}>
-        <table className="w-full min-w-full divide-y divide-slate-100">
+        <table className="w-full min-w-full table-fixed divide-y divide-slate-100">
           <thead
             className="sticky top-0 bg-slate-50"
             style={{ height: TABLE_LAYOUT.HEADER_HEIGHT }}
@@ -296,7 +301,7 @@ function PatientActivityTableComponent({
       <div className="min-h-[540px] space-y-3 p-3 lg:hidden">
         {leads.length === 0 ? (
           <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-12 text-center text-base text-slate-500">
-            No leads match your current filters.
+            No patients match your current filters.
           </div>
         ) : (
           leads.map((lead) => (
@@ -376,7 +381,7 @@ const LeadMobileCard = memo(function LeadMobileCard({
         onClick={() => onViewLead(lead.id)}
         className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-purple-600 bg-white px-4 py-2.5 text-sm font-semibold text-purple-600 transition hover:bg-purple-50"
       >
-        View Lead
+        View Patient
         <ArrowRight size={14} aria-hidden="true" />
       </button>
     </article>

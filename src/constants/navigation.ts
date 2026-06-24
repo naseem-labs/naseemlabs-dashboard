@@ -15,13 +15,13 @@ export const SIDEBAR_NAV_ITEMS = [
   },
   {
     id: 'all-leads',
-    label: 'All Leads',
+    label: 'All patients',
     icon: Users,
     route: ROUTES.LEADS,
   },
   {
     id: 'add-lead',
-    label: 'Add Lead',
+    label: 'Add patient',
     icon: PlusCircle,
     route: ROUTES.ADD_LEAD,
   },
