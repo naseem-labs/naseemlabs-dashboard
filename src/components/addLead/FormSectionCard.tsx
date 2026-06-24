@@ -15,8 +15,8 @@ export function FormSectionCard({
   children,
 }: FormSectionCardProps) {
   return (
-    <section className="app-glass-card app-glass-card--solid p-5 sm:p-6">
-      <div className="mb-5 flex items-center gap-2.5">
+    <section className="app-glass-card app-glass-card--solid p-3 sm:p-6">
+      <div className="mb-3 flex items-center gap-2 sm:mb-5 sm:gap-2.5">
         <span className="app-section-header__icon">
           <Icon size={18} />
         </span>
