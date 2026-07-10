@@ -1,34 +1,56 @@
-import { Check } from 'lucide-react';
-import type { GuideItem } from '../../types/leadDetail';
 import { LeadDetailCard } from './LeadDetailCard';
 
 interface GuideTheAgentCardProps {
-  items: GuideItem[];
-  highlight?: string | null;
+  leadContext: string;
+  followupType: string;
+  followupReason: string;
+  scheduledFor: string;
+  scheduledOn: string;
 }
 
-export function GuideTheAgentCard({ items, highlight }: GuideTheAgentCardProps) {
-  return (
-    <LeadDetailCard title="Guide The Agent">
-      <ul className="space-y-2.5">
-        {items.map((item) => (
-          <li key={item.id} className="flex items-start gap-2.5 text-sm text-navy">
-            <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-50 text-green-600">
-              <Check size={12} strokeWidth={3} />
-            </span>
-            <span>{item.text}</span>
-          </li>
-        ))}
-      </ul>
+function formatDateTime(value: string) {
+  if (!value) return '-';
 
-      {highlight ? (
-        <div className="mt-4 rounded-xl border-2 border-orange-300 bg-orange-50/50 p-3">
-          <p className="text-xs font-semibold uppercase tracking-wide text-orange-700">
-            Next Best Action
-          </p>
-          <p className="mt-1 text-sm font-semibold text-navy">{highlight}</p>
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+    .format(new Date(value))
+    .replace(',', ' at');
+}
+
+export function GuideTheAgentCard({
+  leadContext,
+  followupType,
+  followupReason,
+  scheduledFor,
+  scheduledOn,
+}: GuideTheAgentCardProps) {
+  return (
+    <LeadDetailCard title="Lead Context">
+      <p className="mb-4 text-sm text-navy">{leadContext}</p>
+      <div className="space-y-2 text-sm">
+        <div className="flex">
+          <span className="w-40 font-semibold text-slate-600">Follow-up Type</span>
+          <span className="text-navy">{followupType}</span>
         </div>
-      ) : null}
+        <div className="flex">
+          <span className="w-40 font-semibold text-slate-600">Reason</span>
+          <span className="text-navy">{followupReason}</span>
+        </div>
+        <div className="flex">
+          <span className="w-40 font-semibold text-slate-600">Next Follow-up</span>
+          <span className="text-navy">{formatDateTime(scheduledFor)}</span>
+        </div>
+        <div className="flex">
+          <span className="w-40 font-semibold text-slate-600">Scheduled On</span>
+          <span className="text-navy">{formatDateTime(scheduledOn)}</span>
+        </div>
+      </div>
     </LeadDetailCard>
   );
 }

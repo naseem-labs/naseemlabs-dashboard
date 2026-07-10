@@ -12,11 +12,15 @@ interface PatientInformationCardProps {
 const FIELDS: { key: keyof PatientInformation; label: string; type?: string }[] = [
   { key: 'age', label: 'Age', type: 'number' },
   { key: 'city', label: 'City' },
+  { key: 'occupation', label: 'Occupation' },
   { key: 'hairLossDuration', label: 'Hair Loss Duration' },
   { key: 'affectedArea', label: 'Affected Area' },
   { key: 'hairType', label: 'Hair Type' },
   { key: 'previousTreatment', label: 'Previous Treatment' },
+  { key: 'previousTransplant', label: 'Previous Transplant' },
+  { key: 'budgetRange', label: 'Budget Range' },
   { key: 'goal', label: 'Goal' },
+  { key: 'patientConcern', label: 'Patient Concern' },
 ];
 
 export function PatientInformationCard({
@@ -79,21 +83,29 @@ export function PatientInformationCard({
             {isEditing ? (
               <input
                 type={field.type ?? 'text'}
-                value={draft[field.key]}
+                value={
+                  typeof draft[field.key] === 'boolean'
+                    ? draft[field.key]
+                      ? 'Yes'
+                      : 'No'
+                    : String(draft[field.key] ?? '')
+                }
                 onChange={(event) =>
                   setDraft((current) => ({
                     ...current,
                     [field.key]:
                       field.type === 'number'
                         ? Number(event.target.value)
-                        : event.target.value,
+                        : field.key === 'previousTransplant'
+                          ? event.target.value.toLowerCase() === 'yes'
+                          : event.target.value,
                   }))
                 }
                 className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-navy focus:border-purple-400 focus:outline-none"
               />
             ) : (
               <dd className="mt-0.5 text-sm font-medium text-navy">
-                {patientInfo[field.key]}
+                {patientInfo[field.key] ?? '—'}
               </dd>
             )}
           </div>

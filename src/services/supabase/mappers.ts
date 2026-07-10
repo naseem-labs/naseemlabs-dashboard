@@ -25,6 +25,7 @@ import type {
   DbLeadProfile,
   DbNotification,
   DbUser,
+  DbFollowupQueue,
 } from './types';
 import { mapDbLeadToDetailStage, mapDbStageToUi } from './stageMapping';
 
@@ -341,6 +342,7 @@ export function mapDbLeadToLeadDetail(
   profile: DbLeadProfile | null,
   actions: DbLeadAction[],
   photos: DbLeadPhoto[],
+  followup: DbFollowupQueue | null,
   actorNames: Record<string, string>,
 ): LeadDetailData {
   const detailStage = mapDbLeadToDetailStage(lead);
@@ -349,6 +351,24 @@ export function mapDbLeadToLeadDetail(
   const timelineActions = actions.filter((action) => action.action_type !== 'internal_note');
   const noteActions = actions.filter((action) => action.action_type === 'internal_note');
   const latestAction = timelineActions[0];
+
+  const nextActionLabels: Record<string, string> = {
+    request_photos: 'Request Photos',
+    send_pricing: 'Send Pricing',
+    schedule_consultation: 'Schedule Consultation',
+    doctor_review: 'Doctor Review',
+    waiting_for_reply: 'Waiting for Patient Reply',
+    no_action: 'No Action',
+  };
+
+  const followupLabels: Record<string, string> = {
+    photo_followup: 'Photo Follow-up',
+    pricing_followup: 'Pricing Follow-up',
+    consultation_followup: 'Consultation Follow-up',
+    doctor_review_followup: 'Doctor Review Follow-up',
+    reply_followup: 'Reply Follow-up',
+    general_followup: 'General Follow-up',
+  };
 
   const metrics: LeadMetrics = {
     currentStage: {
@@ -361,7 +381,7 @@ export function mapDbLeadToLeadDetail(
     },
     nextAction: {
       label: 'Next Action',
-      value: profile?.next_action ?? deriveNextAction(lead, profile).label,
+      value: nextActionLabels[profile?.next_action ?? ''] ?? deriveNextAction(lead, profile).label,
       variant: 'orange',
     },
     lastActivity: {
@@ -399,20 +419,27 @@ export function mapDbLeadToLeadDetail(
     patientInfo: {
       age: profile?.age ?? 0,
       city: lead.city ?? profile?.location ?? 'Not set',
+      occupation: profile?.occupation ?? 'Not specified',
       hairLossDuration: profile?.hair_loss_duration ?? 'Not specified',
       affectedArea: profile?.affected_area ?? 'Not specified',
       hairType: profile?.hair_type ?? 'Not specified',
       previousTreatment: profile?.previous_treatment ?? 'None',
+      previousTransplant: profile?.previous_transplant ?? false,
+      budgetRange: profile?.budget_range ?? 'Not specified',
       goal: profile?.goal ?? 'Not specified',
+      patientConcern: profile?.patient_concern ?? 'Not specified',
       createdOn: lead.created_at ?? new Date().toISOString(),
     },
-    snapshot: {
-      mainConcern: profile?.patient_concern ?? 'Not specified',
-      decisionStage: profile?.lead_context ?? 'Researching',
-      currentRisk: 'Medium',
-      confidenceLevel: 'Medium',
-      likelyObjection: profile?.budget_range ?? 'Not specified',
-      bestNextStep: profile?.next_action ?? 'Follow up with patient',
+    leadProfile: {
+      aiSummary: profile?.ai_summary ?? 'No AI summary available.',
+      leadContext: profile?.lead_context ?? 'No context available.',
+      nextAction: nextActionLabels[profile?.next_action ?? ''] ?? 'No Action',
+    },
+    followUp: {
+      followupType: followupLabels[followup?.followup_type ?? ''] ?? '',
+      followupReason: followup?.followup_reason ?? '',
+      scheduledFor: followup?.scheduled_for ?? '',
+      createdAt: followup?.created_at ?? '',
     },
     guideItems: buildGuideItems(profile, lead),
     photos: buildPhotos(lead, photos),

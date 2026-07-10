@@ -20,17 +20,6 @@ import { useDashboard } from '../../hooks/useDashboard';
 import { useLeadDetail } from '../../hooks/useLeadDetail';
 import { useNotifications } from '../../hooks/useNotifications';
 
-function getNextBestAction(detail: NonNullable<ReturnType<typeof useLeadDetail>['detail']>): string | null {
-  if (detail.stage === 'waiting_for_photos') {
-    return 'Request donor area photo';
-  }
-
-  if (detail.stage === 'follow_up_active' && detail.photos.some((photo) => photo.status === 'missing')) {
-    return 'Request donor area photo';
-  }
-
-  return null;
-}
 
 export function LeadDetailPage() {
   const { leadId } = useParams<{ leadId: string }>();
@@ -96,7 +85,6 @@ export function LeadDetailPage() {
     );
   }
 
-  const nextBestAction = getNextBestAction(detail);
 
   return (
     <DashboardLayout
@@ -136,8 +124,14 @@ export function LeadDetailPage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <PatientSnapshotCard snapshot={detail.snapshot} />
-            <GuideTheAgentCard items={detail.guideItems} highlight={nextBestAction} />
+            <PatientSnapshotCard profile={detail.leadProfile} />
+            <GuideTheAgentCard
+              leadContext={detail.leadProfile.leadContext ?? ''}
+              followupType={detail.followUp?.followupType ?? '-'}
+              followupReason={detail.followUp?.followupReason ?? '-'}
+              scheduledFor={detail.followUp?.scheduledFor ?? '-'}
+              scheduledOn={detail.followUp?.createdAt ?? '-'}
+            />
             <PhotosCard photos={detail.photos} />
             <ActionSystemCard
               detail={detail}

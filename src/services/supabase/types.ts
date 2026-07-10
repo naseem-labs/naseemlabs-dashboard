@@ -69,6 +69,20 @@ export interface DbLeadPhoto {
   uploaded_at: string | null;
 }
 
+export interface DbFollowupQueue {
+  id: string;
+  lead_id: string;
+  clinic_id: string;
+  patient_number: string;
+  clinic_number: string;
+  followup_type: string;
+  followup_reason: string | null;
+  scheduled_for: string | null;
+  status: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 export interface DbNotification {
   id: string;
   clinic_id: string;

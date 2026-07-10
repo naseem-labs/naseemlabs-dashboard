@@ -48,21 +48,29 @@ export interface LeadMetrics {
 export interface PatientInformation {
   age: number;
   city: string;
+  occupation: string;
   hairLossDuration: string;
   affectedArea: string;
   hairType: string;
   previousTreatment: string;
+  previousTransplant: boolean;
+  budgetRange: string;
   goal: string;
+  patientConcern: string;
   createdOn: string;
 }
 
-export interface PatientSnapshot {
-  mainConcern: string;
-  decisionStage: string;
-  currentRisk: string;
-  confidenceLevel: string;
-  likelyObjection: string;
-  bestNextStep: string;
+export interface LeadProfile {
+  aiSummary: string;
+  leadContext: string;
+  nextAction: string;
+}
+
+export interface FollowUp {
+  followupType: string;
+  followupReason: string;
+  scheduledFor: string;
+  createdAt: string;
 }
 
 export interface GuideItem {
@@ -103,7 +111,8 @@ export interface LeadDetailData {
   followUpActive: boolean;
   metrics: LeadMetrics;
   patientInfo: PatientInformation;
-  snapshot: PatientSnapshot;
+  leadProfile: LeadProfile;
+  followUp: FollowUp;
   guideItems: GuideItem[];
   photos: LeadPhoto[];
   notes: InternalNote[];
