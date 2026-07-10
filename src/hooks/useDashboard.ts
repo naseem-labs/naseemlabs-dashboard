@@ -87,8 +87,22 @@ export function useLeadFilters(
     const query = filters.search.trim().toLowerCase();
 
     return leads.filter((lead) => {
-      const matchesStage =
-        filters.stage === 'all' ? true : lead.stage === filters.stage;
+      const matchesStage = (() => {
+        if (filters.stage === 'all') {
+          return true;
+        }
+
+        if (filters.stage === 'follow_up') {
+          return [
+            'follow_up',
+            'waiting_for_photos',
+            'photos_received',
+            'doctor_review',
+          ].includes(lead.stage);
+        }
+
+        return lead.stage === filters.stage;
+      })();
 
       const fullName = `${lead.first_name} ${lead.last_name}`.toLowerCase();
       const matchesSearch =

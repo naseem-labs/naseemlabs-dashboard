@@ -11,8 +11,8 @@ export const STAGE_CONFIG: Record<LeadStage, StageConfig> = {
     textClass: 'text-orange-700',
     bgClass: 'bg-orange-50',
   },
-  information_collected: {
-    label: 'Information Collected',
+  waiting_for_photos: {
+    label: 'Waiting For Photos',
     textClass: 'text-purple-700',
     bgClass: 'bg-purple-50',
   },
@@ -59,7 +59,7 @@ export const STAGE_FILTER_OPTIONS: { value: LeadStage | 'all'; label: string }[]
   { value: 'all', label: 'All Stages' },
   { value: 'new_lead', label: 'New Lead' },
   { value: 'follow_up', label: 'Follow Up' },
-  { value: 'information_collected', label: 'Information Collected' },
+  { value: 'waiting_for_photos', label: 'Waiting For Photos' },
   { value: 'photos_received', label: 'Photos Received' },
   { value: 'consultation_ready', label: 'Consultation Ready' },
   { value: 'doctor_review', label: 'Doctor Review' },

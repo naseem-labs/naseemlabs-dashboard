@@ -6,7 +6,7 @@ import type { DbLead } from './types';
 export const UI_TO_DB_STAGE: Record<LeadStage, string> = {
   new_lead: 'new',
   follow_up: 'follow_up',
-  information_collected: 'waiting_for_photos',
+  waiting_for_photos: 'waiting_for_photos',
   photos_received: 'photos_received',
   consultation_ready: 'consultation_ready',
   doctor_review: 'doctor_review',
@@ -16,7 +16,7 @@ export const UI_TO_DB_STAGE: Record<LeadStage, string> = {
 export const DB_TO_UI_STAGE: Record<string, LeadStage> = {
   new: 'new_lead',
   follow_up: 'follow_up',
-  waiting_for_photos: 'information_collected',
+  waiting_for_photos: 'waiting_for_photos',
   photos_received: 'photos_received',
   consultation_ready: 'consultation_ready',
   doctor_review: 'doctor_review',

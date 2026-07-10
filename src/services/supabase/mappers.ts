@@ -204,7 +204,7 @@ export function mapDbLeadToLead(
     first_name: firstName,
     last_name: lastName,
     phone: formatPhoneForDisplay(lead.phone),
-    stage: mapDbStageToUi(lead.stage, lead.followup_active),
+    stage: mapDbLeadToDetailStage(lead),
     last_activity: mapActionToActivity(latestAction),
     next_action: deriveNextAction(lead, profile),
     avatar_initials: getInitials(lead.name, lead.phone),

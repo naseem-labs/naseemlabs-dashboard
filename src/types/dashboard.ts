@@ -1,7 +1,7 @@
 export type LeadStage =
   | 'new_lead'
   | 'follow_up'
-  | 'information_collected'
+  | 'waiting_for_photos'
   | 'photos_received'
   | 'consultation_ready'
   | 'doctor_review';

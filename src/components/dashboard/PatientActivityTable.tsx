@@ -99,7 +99,11 @@ const TableRows = memo(function TableRows({
   return (
     <>
       {leads.map((lead) => {
-        const stageConfig = STAGE_CONFIG[lead.stage];
+        const stageConfig = STAGE_CONFIG[lead.stage] ?? {
+          label: 'Unknown',
+          bgClass: 'bg-slate-100',
+          textClass: 'text-slate-600',
+        };
 
         return (
           <tr
@@ -349,7 +353,11 @@ const LeadMobileCard = memo(function LeadMobileCard({
   onViewLead,
   onNextAction,
 }: LeadMobileCardProps) {
-  const stageConfig = STAGE_CONFIG[lead.stage];
+  const stageConfig = STAGE_CONFIG[lead.stage] ?? {
+    label: 'Unknown',
+    bgClass: 'bg-slate-100',
+    textClass: 'text-slate-600',
+  };
 
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
