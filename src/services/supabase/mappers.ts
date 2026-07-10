@@ -124,7 +124,7 @@ function deriveNextAction(lead: DbLead, profile: DbLeadProfile | null): NextActi
       return { id: `na-${lead.id}`, label: 'Start Follow Up', action_type: 'follow_up', variant: 'orange' };
     case 'follow_up':
       return { id: `na-${lead.id}`, label: 'Follow Up Today', action_type: 'follow_up', variant: 'orange' };
-    case 'information_collected':
+    case 'waiting_for_photos':
       return { id: `na-${lead.id}`, label: 'Request Photos', action_type: 'request_photos', variant: 'orange' };
     case 'consultation_ready':
       return {
@@ -204,7 +204,7 @@ export function mapDbLeadToLead(
     first_name: firstName,
     last_name: lastName,
     phone: formatPhoneForDisplay(lead.phone),
-    stage: mapDbLeadToDetailStage(lead),
+    stage: mapDbStageToUi(lead.stage, lead.followup_active),
     last_activity: mapActionToActivity(latestAction),
     next_action: deriveNextAction(lead, profile),
     avatar_initials: getInitials(lead.name, lead.phone),

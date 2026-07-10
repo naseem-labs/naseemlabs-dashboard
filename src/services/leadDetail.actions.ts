@@ -6,7 +6,7 @@ import { leads, kpiStatsMutable } from '../data/mockDashboardData';
 const DETAIL_TO_DASHBOARD_STAGE: Record<LeadDetailStage, LeadStage> = {
   new_lead: 'new_lead',
   follow_up_active: 'follow_up',
-  waiting_for_photos: 'information_collected',
+  waiting_for_photos: 'waiting_for_photos',
   doctor_review_requested: 'doctor_review',
   consultation_ready: 'consultation_ready',
   lost_lead: 'new_lead',
@@ -15,7 +15,7 @@ const DETAIL_TO_DASHBOARD_STAGE: Record<LeadDetailStage, LeadStage> = {
 const STAGE_KPI_FILTER: Record<LeadStage, string | null> = {
   new_lead: 'kpi-new-leads',
   follow_up: 'kpi-follow-up',
-  information_collected: 'kpi-follow-up',
+  waiting_for_photos: 'kpi-follow-up',
   photos_received: 'kpi-follow-up',
   consultation_ready: 'kpi-consultation',
   doctor_review: 'kpi-doctor-review',

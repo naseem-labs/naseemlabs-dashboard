@@ -241,7 +241,7 @@ function mapDashboardStageToDetail(stage: Lead['stage']): LeadDetailStage {
       return 'new_lead';
     case 'follow_up':
       return 'follow_up_active';
-    case 'information_collected':
+    case 'waiting_for_photos':
       return 'waiting_for_photos';
     case 'doctor_review':
       return 'doctor_review_requested';

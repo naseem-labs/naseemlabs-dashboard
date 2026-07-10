@@ -99,7 +99,7 @@ export const leads: Lead[] = [
     first_name: 'Simran',
     last_name: 'Kaur',
     phone: '+91 98123 45678',
-    stage: 'information_collected',
+    stage: 'waiting_for_photos',
     last_activity: {
       label: 'Yesterday',
       description: 'Patient form submitted',
