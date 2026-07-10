@@ -29,7 +29,7 @@ async function fetchLeadBundle(leadId: string) {
     return null;
   }
 
-  const [{ data: profile }, { data: actions }, { data: photos }] = await Promise.all([
+  const [{ data: profile }, { data: actions }, { data: photos }, { data: followup }] = await Promise.all([
     supabase.from('lead_profile').select('*').eq('lead_id', leadId).maybeSingle<DbLeadProfile>(),
     supabase
       .from('lead_actions')
@@ -37,6 +37,12 @@ async function fetchLeadBundle(leadId: string) {
       .eq('lead_id', leadId)
       .order('created_at', { ascending: false }),
     supabase.from('lead_photos').select('*').eq('lead_id', leadId),
+    supabase
+      .from('followup_queue')
+      .select('*')
+      .eq('lead_id', leadId)
+      .order('created_at', { ascending: false })
+      .limit(1),
   ]);
 
   const userIds = Array.from(
@@ -56,6 +62,7 @@ async function fetchLeadBundle(leadId: string) {
     profile,
     (actions ?? []) as DbLeadAction[],
     (photos ?? []) as DbLeadPhoto[],
+    (followup ?? [])[0] ?? null,
     actorNames,
   );
 }

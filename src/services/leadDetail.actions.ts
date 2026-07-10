@@ -190,11 +190,6 @@ export const leadDetailActions = {
         { id: 'guide-rp-3', text: 'Send gentle reminder if no response in 48 hours' },
         { id: 'guide-rp-4', text: 'Best follow-up time: After 6 PM' },
       ],
-      snapshot: {
-        ...updated.snapshot,
-        bestNextStep: 'Request donor area photo and crown view',
-        currentRisk: 'Delay',
-      },
     };
 
     updated = prependTimeline(updated, 'Photos Requested', { actorName });
@@ -249,12 +244,6 @@ export const leadDetailActions = {
         { id: 'guide-cr-2', text: 'Confirm patient availability for video or in-clinic visit' },
         { id: 'guide-cr-3', text: 'Share pre-consultation checklist' },
       ],
-      snapshot: {
-        ...updated.snapshot,
-        decisionStage: 'Ready to Consult',
-        currentRisk: 'Low',
-        bestNextStep: 'Schedule consultation at earliest convenience',
-      },
     };
 
     updated = prependTimeline(updated, 'Consultation Ready Marked', { actorName });

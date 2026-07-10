@@ -83,6 +83,7 @@ export interface LeadPhoto {
   label: string;
   status: PhotoStatus;
   storageUrl: string | null;
+  uploadedAt?: string;
 }
 
 export interface InternalNote {
