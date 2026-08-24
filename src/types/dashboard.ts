@@ -73,6 +73,8 @@ export interface NextAction {
   variant: 'orange' | 'purple' | 'blue' | 'green' | 'navy';
 }
 
+import type { LeadPhoto } from './leadDetail';
+
 export interface Lead {
   id: string;
   clinic_id: string;
@@ -83,6 +85,7 @@ export interface Lead {
   last_activity: LastActivity;
   next_action: NextAction;
   avatar_initials: string;
+  photos: LeadPhoto[];
   created_at: string;
   updated_at: string;
 }

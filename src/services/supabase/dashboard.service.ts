@@ -8,7 +8,8 @@ import {
   mapDbLeadToLead,
   mapDbNotification,
 } from './mappers';
-import type { DbLead, DbLeadAction, DbLeadProfile, DbNotification } from './types';
+import { createSignedPhotoUrls } from './photoStorage';
+import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbNotification } from './types';
 
 export async function fetchSupabaseDashboardData(): Promise<DashboardData | null> {
   if (!isSupabaseConfigured()) {
@@ -41,7 +42,7 @@ export async function fetchSupabaseDashboardData(): Promise<DashboardData | null
   const leads = (leadRows ?? []) as DbLead[];
   const leadIds = leads.map((lead) => lead.id);
 
-  const [{ data: actionRows }, { data: profileRows }, { data: notificationRows }] =
+  const [{ data: actionRows }, { data: profileRows }, { data: photoRows }, { data: notificationRows }] =
     await Promise.all([
       leadIds.length
         ? supabase
@@ -53,6 +54,9 @@ export async function fetchSupabaseDashboardData(): Promise<DashboardData | null
       leadIds.length
         ? supabase.from('lead_profile').select('*').in('lead_id', leadIds)
         : Promise.resolve({ data: [] as DbLeadProfile[] }),
+      leadIds.length
+        ? supabase.from('lead_photos').select('*').in('lead_id', leadIds)
+        : Promise.resolve({ data: [] as DbLeadPhoto[] }),
       supabase
         .from('notifications')
         .select('*')
@@ -73,8 +77,24 @@ export async function fetchSupabaseDashboardData(): Promise<DashboardData | null
     profilesByLead.set(profile.lead_id, profile);
   }
 
+  const photosByLead = new Map<string, DbLeadPhoto[]>();
+  for (const photo of (photoRows ?? []) as DbLeadPhoto[]) {
+    const existing = photosByLead.get(photo.lead_id) ?? [];
+    existing.push(photo);
+    photosByLead.set(photo.lead_id, existing);
+  }
+
+  const allPhotos = (photoRows ?? []) as DbLeadPhoto[];
+  const signedUrls = await createSignedPhotoUrls(allPhotos);
+
   const mappedLeads = leads.map((lead) =>
-    mapDbLeadToLead(lead, actionsByLead.get(lead.id)?.[0], profilesByLead.get(lead.id) ?? null),
+    mapDbLeadToLead(
+      lead,
+      actionsByLead.get(lead.id)?.[0],
+      profilesByLead.get(lead.id) ?? null,
+      photosByLead.get(lead.id) ?? [],
+      signedUrls,
+    ),
   );
 
   return {

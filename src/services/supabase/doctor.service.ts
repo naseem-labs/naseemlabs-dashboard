@@ -4,6 +4,7 @@ import { getSupabaseClient } from '../../lib/supabase';
 import { authService } from '../auth.service';
 import { resolveWorkspaceContext } from './clinicContext';
 import { mapDbLeadToLeadDetail } from './mappers';
+import { createSignedPhotoUrls } from './photoStorage';
 import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbUser } from './types';
 
 export interface DoctorReviewLead {
@@ -57,13 +58,17 @@ async function fetchLeadBundle(leadId: string) {
     );
   }
 
+  const photoRows = (photos ?? []) as DbLeadPhoto[];
+  const signedUrls = await createSignedPhotoUrls(photoRows);
+
   return mapDbLeadToLeadDetail(
     lead,
     profile,
     (actions ?? []) as DbLeadAction[],
-    (photos ?? []) as DbLeadPhoto[],
+    photoRows,
     (followup ?? [])[0] ?? null,
     actorNames,
+    signedUrls,
   );
 }
 
@@ -201,6 +206,7 @@ export async function fetchDoctorDashboardLeads(): Promise<Lead[]> {
       .join('')
       .slice(0, 2)
       .toUpperCase(),
+    photos: [],
     created_at: item.requestedAt ?? new Date().toISOString(),
     updated_at: item.requestedAt ?? new Date().toISOString(),
   }));

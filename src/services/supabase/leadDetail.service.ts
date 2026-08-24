@@ -8,6 +8,7 @@ import type {
 import { getLostReasonLabel } from '../../constants/leadDetail';
 import { getSupabaseClient } from '../../lib/supabase';
 import { mapDbLeadToLeadDetail } from './mappers';
+import { createSignedPhotoUrls } from './photoStorage';
 import { mapDetailStageToDb } from './stageMapping';
 import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbUser } from './types';
 
@@ -62,13 +63,17 @@ async function fetchLeadBundle(leadId: string, clinicId: string) {
     );
   }
 
+  const photoRows = (photos ?? []) as DbLeadPhoto[];
+  const signedUrls = await createSignedPhotoUrls(photoRows);
+
   return mapDbLeadToLeadDetail(
     lead,
     profile,
     (actions ?? []) as DbLeadAction[],
-    (photos ?? []) as DbLeadPhoto[],
+    photoRows,
     (followup ?? [])[0] ?? null,
     actorNames,
+    signedUrls,
   );
 }
 

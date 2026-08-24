@@ -29,13 +29,6 @@ import type {
 } from './types';
 import { mapDbLeadToDetailStage, mapDbStageToUi } from './stageMapping';
 
-const PHOTO_LABELS: Record<string, string> = {
-  front: 'Front View',
-  top: 'Top View',
-  crown: 'Crown View',
-  donor: 'Donor Area',
-};
-
 export function getInitials(name: string | null, phone: string): string {
   if (name?.trim()) {
     const parts = name.trim().split(/\s+/);
@@ -195,6 +188,8 @@ export function mapDbLeadToLead(
   lead: DbLead,
   latestAction: DbLeadAction | undefined,
   profile: DbLeadProfile | null,
+  photos: DbLeadPhoto[] = [],
+  signedUrls: Record<string, string> = {},
 ): Lead {
   const { firstName, lastName } = splitPatientName(lead.name);
 
@@ -208,6 +203,7 @@ export function mapDbLeadToLead(
     last_activity: mapActionToActivity(latestAction),
     next_action: deriveNextAction(lead, profile),
     avatar_initials: getInitials(lead.name, lead.phone),
+    photos: buildLeadPhotos(photos, signedUrls),
     created_at: lead.created_at ?? new Date().toISOString(),
     updated_at: lead.updated_at ?? lead.created_at ?? new Date().toISOString(),
   };
@@ -287,32 +283,24 @@ function mapActionToTimeline(action: DbLeadAction, actorName?: string): Timeline
   };
 }
 
-function buildPhotos(
-  lead: DbLead,
+export function buildLeadPhotos(
   uploadedPhotos: DbLeadPhoto[],
+  signedUrls: Record<string, string>,
 ): LeadPhoto[] {
-  const requested = lead.requested_photo_types ?? [];
-  const types = ['front', 'top', 'crown', 'donor'];
-
-  return types.map((type) => {
-    const uploaded = uploadedPhotos.find((photo) => photo.photo_type === type);
-    let status: LeadPhoto['status'] = 'missing';
-
-    if (uploaded) {
-      status = 'received';
-    } else if (requested.includes(type)) {
-      status = lead.photos_available ? 'received' : 'requested';
-    } else if (lead.photos_available) {
-      status = 'pending';
-    }
-
-    return {
-      id: uploaded?.id ?? `${lead.id}-${type}`,
-      label: PHOTO_LABELS[type] ?? type,
-      status,
-      storageUrl: uploaded?.storage_path ?? null,
-    };
-  });
+  return uploadedPhotos
+    .filter((photo) => photo.storage_path && !photo.storage_path.startsWith('pending/'))
+    .sort((a, b) => {
+      const aTime = a.uploaded_at ? new Date(a.uploaded_at).getTime() : 0;
+      const bTime = b.uploaded_at ? new Date(b.uploaded_at).getTime() : 0;
+      return bTime - aTime;
+    })
+    .map((photo) => ({
+      id: photo.id,
+      label: '',
+      status: 'received' as const,
+      storageUrl: signedUrls[photo.id] ?? null,
+      uploadedAt: photo.uploaded_at ?? undefined,
+    }));
 }
 
 function buildGuideItems(profile: DbLeadProfile | null, lead: DbLead): GuideItem[] {
@@ -344,6 +332,7 @@ export function mapDbLeadToLeadDetail(
   photos: DbLeadPhoto[],
   followup: DbFollowupQueue | null,
   actorNames: Record<string, string>,
+  signedUrls: Record<string, string> = {},
 ): LeadDetailData {
   const detailStage = mapDbLeadToDetailStage(lead);
   const stageConfig = LEAD_DETAIL_STAGE_CONFIG[detailStage];
@@ -442,7 +431,7 @@ export function mapDbLeadToLeadDetail(
       createdAt: followup?.created_at ?? '',
     },
     guideItems: buildGuideItems(profile, lead),
-    photos: buildPhotos(lead, photos),
+    photos: buildLeadPhotos(photos, signedUrls),
     notes: noteActions.map((action) => ({
       id: action.id,
       content: action.action_note ?? '',
