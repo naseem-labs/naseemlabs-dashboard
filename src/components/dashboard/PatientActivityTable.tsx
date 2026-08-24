@@ -12,7 +12,6 @@ import {
 import type { Lead, LastActivity } from '../../types/dashboard';
 import { TABLE_LAYOUT } from '../../constants/table';
 import { STAGE_CONFIG } from '../../constants/stages';
-import { LeadPhotoGrid } from '../common/LeadPhotoGrid';
 import { PatientAvatar } from './PatientAvatar';
 
 interface PatientActivityTableProps {
@@ -115,14 +114,9 @@ const TableRows = memo(function TableRows({
             <td className="px-5 py-4">
               <div className="flex items-center gap-3">
                 <PatientAvatar initials={lead.avatar_initials} size="sm" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-semibold text-navy">
-                      {lead.first_name} {lead.last_name}
-                    </span>
-                    <LeadPhotoGrid photos={lead.photos} compact />
-                  </div>
-                </div>
+                <span className="text-sm font-semibold text-navy">
+                  {lead.first_name} {lead.last_name}
+                </span>
               </div>
             </td>
             <td className="px-5 py-4">
@@ -389,12 +383,6 @@ const LeadMobileCard = memo(function LeadMobileCard({
       >
         {lead.next_action.label}
       </button>
-
-      {lead.photos.some((photo) => photo.storageUrl) ? (
-        <div className="mb-3">
-          <LeadPhotoGrid photos={lead.photos} />
-        </div>
-      ) : null}
 
       <button
         type="button"
