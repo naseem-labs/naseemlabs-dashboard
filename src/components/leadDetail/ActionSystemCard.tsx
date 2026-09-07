@@ -32,59 +32,68 @@ export function ActionSystemCard({
   const isLost = detail.stage === 'lost_lead';
 
   return (
-    <section className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-      <h2 className="mb-4 text-sm font-semibold text-navy">Action System</h2>
+    <section
+      tabIndex={0}
+      className="group rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm outline-none"
+    >
+      <h2 className="text-sm font-semibold text-navy group-hover:mb-4 group-focus-within:mb-4 [@media(hover:none)]:mb-4">
+        Action System
+      </h2>
 
-      <div className="flex flex-col gap-2.5">
-        {detail.followUpActive ? (
-          <ActionButton
-            label="Pause Follow Up"
-            icon={<Pause size={16} />}
-            variant="green"
-            onClick={onPauseFollowUp}
-            disabled={isLoading || isLost}
-          />
-        ) : (
-          <ActionButton
-            label="Start Follow Up"
-            icon={<Play size={16} />}
-            variant="green"
-            onClick={onStartFollowUp}
-            disabled={isLoading || isLost}
-          />
-        )}
+      <div className="grid grid-rows-[0fr] overflow-hidden transition-[grid-template-rows] duration-200 group-hover:grid-rows-[1fr] group-focus-within:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]">
+        <div className="min-h-0 overflow-hidden">
+          <div className="flex flex-col gap-2.5">
+            {detail.followUpActive ? (
+              <ActionButton
+                label="Pause Follow Up"
+                icon={<Pause size={16} />}
+                variant="green"
+                onClick={onPauseFollowUp}
+                disabled={isLoading || isLost}
+              />
+            ) : (
+              <ActionButton
+                label="Start Follow Up"
+                icon={<Play size={16} />}
+                variant="green"
+                onClick={onStartFollowUp}
+                disabled={isLoading || isLost}
+              />
+            )}
 
-        <ActionButton
-          label="Request Photos"
-          icon={<Camera size={16} />}
-          variant="orange"
-          onClick={onRequestPhotos}
-          disabled={isLoading || isLost}
-        />
+            <ActionButton
+              label="Request Photos"
+              icon={<Camera size={16} />}
+              variant="orange"
+              onClick={onRequestPhotos}
+              disabled={isLoading || isLost}
+            />
 
-        <ActionButton
-          label="Send To Doctor"
-          icon={<Stethoscope size={16} />}
-          variant="purple"
-          onClick={onSendToDoctorReview}
-          disabled={isLoading || isLost}
-        />
+            <ActionButton
+              label="Send To Doctor"
+              icon={<Stethoscope size={16} />}
+              variant="purple"
+              onClick={onSendToDoctorReview}
+              disabled={isLoading || isLost}
+            />
 
-        <ActionButton
-          label="Mark Consultation Ready"
-          icon={<Calendar size={16} />}
-          variant="blue"
-          onClick={onMarkConsultationReady}
-          disabled={isLoading || isLost}
-        />
+            <ActionButton
+              label="Mark Consultation Ready"
+              icon={<Calendar size={16} />}
+              variant="blue"
+              onClick={onMarkConsultationReady}
+              disabled={isLoading || isLost}
+            />
 
-        <ActionButton
-          label="Mark Lost Lead"
-          icon={<X size={16} />}
-          variant="red"
-          onClick={onMarkLostLead}
-          disabled={isLoading || isLost}
-        />
+            <ActionButton
+              label="Mark Lost Lead"
+              icon={<X size={16} />}
+              variant="red"
+              onClick={onMarkLostLead}
+              disabled={isLoading || isLost}
+            />
+          </div>
+        </div>
       </div>
     </section>
   );

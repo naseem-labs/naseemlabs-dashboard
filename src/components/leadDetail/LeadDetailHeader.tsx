@@ -86,9 +86,9 @@ export function LeadDetailHeader({
           <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
             <a
               href={telHref}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-700 sm:flex-none"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold !text-white shadow-sm transition hover:bg-green-700 sm:flex-none"
             >
-              <Phone size={16} />
+              <Phone size={16} className="text-white" />
               Call Patient
             </a>
 

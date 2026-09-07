@@ -359,14 +359,13 @@ export function mapDbLeadToLeadDetail(
     general_followup: 'General Follow-up',
   };
 
+  const patientConcern = profile?.patient_concern?.trim() || 'Not specified';
+
   const metrics: LeadMetrics = {
     currentStage: {
-      label: 'Current Stage',
-      value: stageConfig.label,
-      subValue: lead.created_at
-        ? `Since ${new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
-        : undefined,
-      variant: detailStage === 'lost_lead' ? 'red' : detailStage === 'follow_up_active' ? 'orange' : 'green',
+      label: 'Patient Concern',
+      value: patientConcern,
+      variant: patientConcern === 'Not specified' ? 'slate' : 'green',
     },
     nextAction: {
       label: 'Next Action',

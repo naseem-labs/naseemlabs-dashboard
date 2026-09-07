@@ -271,6 +271,7 @@ export async function updatePatientInfoInSupabase(
     previous_treatment: patientInfo.previousTreatment,
     goal: patientInfo.goal,
     location: patientInfo.city,
+    patient_concern: patientInfo.patientConcern,
     updated_at: new Date().toISOString(),
   });
 
