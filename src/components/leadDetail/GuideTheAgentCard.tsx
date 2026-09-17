@@ -33,24 +33,24 @@ export function GuideTheAgentCard({
   return (
     <LeadDetailCard title="Lead Context">
       <p className="mb-4 text-sm text-navy">{leadContext}</p>
-      <div className="space-y-2 text-sm">
-        <div className="flex">
-          <span className="w-40 font-semibold text-slate-600">Follow-up Type</span>
-          <span className="text-navy">{followupType}</span>
+      <dl className="space-y-3 text-sm">
+        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
+          <dt className="font-semibold text-slate-600">Follow-up Type</dt>
+          <dd className="min-w-0 break-words text-navy">{followupType}</dd>
         </div>
-        <div className="flex">
-          <span className="w-40 font-semibold text-slate-600">Reason</span>
-          <span className="text-navy">{followupReason}</span>
+        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
+          <dt className="font-semibold text-slate-600">Reason</dt>
+          <dd className="min-w-0 break-words text-navy">{followupReason}</dd>
         </div>
-        <div className="flex">
-          <span className="w-40 font-semibold text-slate-600">Next Follow-up</span>
-          <span className="text-navy">{formatDateTime(scheduledFor)}</span>
+        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
+          <dt className="font-semibold text-slate-600">Next Follow-up</dt>
+          <dd className="min-w-0 break-words text-navy">{formatDateTime(scheduledFor)}</dd>
         </div>
-        <div className="flex">
-          <span className="w-40 font-semibold text-slate-600">Scheduled On</span>
-          <span className="text-navy">{formatDateTime(scheduledOn)}</span>
+        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
+          <dt className="font-semibold text-slate-600">Scheduled On</dt>
+          <dd className="min-w-0 break-words text-navy">{formatDateTime(scheduledOn)}</dd>
         </div>
-      </div>
+      </dl>
     </LeadDetailCard>
   );
 }

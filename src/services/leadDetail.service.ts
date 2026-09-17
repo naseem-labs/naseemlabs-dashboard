@@ -8,10 +8,13 @@ import { isSupabaseConfigured } from '../lib/supabase';
 import {
   addNoteInSupabase,
   deleteNoteInSupabase,
+  fetchChatHistoryInSupabase,
   fetchSupabaseLeadDetail,
+  hasPendingAiSummaryRequestInSupabase,
   markConsultationReadyInSupabase,
   markLostLeadInSupabase,
   pauseFollowUpInSupabase,
+  requestAiSummaryInSupabase,
   requestPhotosInSupabase,
   sendToDoctorReviewInSupabase,
   startFollowUpInSupabase,
@@ -113,5 +116,20 @@ export const leadDetailService = {
   ): Promise<LeadDetailData> {
     requireSupabase();
     return updatePatientInfoInSupabase(detail, patientInfo);
+  },
+
+  async requestAiSummary(detail: LeadDetailData): Promise<void> {
+    requireSupabase();
+    return requestAiSummaryInSupabase(detail);
+  },
+
+  async hasPendingAiSummaryRequest(leadId: string): Promise<boolean> {
+    requireSupabase();
+    return hasPendingAiSummaryRequestInSupabase(leadId);
+  },
+
+  async fetchChatHistory(clinicId: string, phone: string) {
+    requireSupabase();
+    return fetchChatHistoryInSupabase(clinicId, phone);
   },
 };

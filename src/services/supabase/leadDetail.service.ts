@@ -1,16 +1,18 @@
 import type {
   AddNotePayload,
+  LeadChatMessage,
   LeadDetailData,
   LostLeadReason,
   PatientInformation,
   UpdateNotePayload,
 } from '../../types/leadDetail';
+import { normalizePhone } from '../../lib/phone';
 import { getLostReasonLabel } from '../../constants/leadDetail';
 import { getSupabaseClient } from '../../lib/supabase';
 import { mapDbLeadToLeadDetail } from './mappers';
 import { createSignedPhotoUrls } from './photoStorage';
 import { mapDetailStageToDb } from './stageMapping';
-import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbUser } from './types';
+import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbChatHistoryRow, DbUser } from './types';
 
 async function fetchLeadBundle(leadId: string, clinicId: string) {
   const supabase = getSupabaseClient();
@@ -276,4 +278,113 @@ export async function updatePatientInfoInSupabase(
   });
 
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
+}
+
+function extractChatContent(content: unknown): string {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  if (Array.isArray(content)) {
+    return content
+      .map((part) => {
+        if (typeof part === 'string') {
+          return part;
+        }
+        if (part && typeof part === 'object' && 'text' in part) {
+          return String((part as { text?: unknown }).text ?? '');
+        }
+        return '';
+      })
+      .join('')
+      .trim();
+  }
+
+  return '';
+}
+
+function chatSessionCandidates(phone: string): string[] {
+  const normalized = normalizePhone(phone);
+  const digits = phone.replace(/\D/g, '');
+  return Array.from(
+    new Set(
+      [normalized, digits, digits.slice(-10), phone.trim()].filter((value) => value.length > 0),
+    ),
+  );
+}
+
+export async function hasPendingAiSummaryRequestInSupabase(leadId: string): Promise<boolean> {
+  const supabase = getSupabaseClient();
+
+  const { count, error } = await supabase
+    .from('ai_summary_requests')
+    .select('id', { count: 'exact', head: true })
+    .eq('lead_id', leadId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (count ?? 0) > 0;
+}
+
+export async function requestAiSummaryInSupabase(detail: LeadDetailData): Promise<void> {
+  const supabase = getSupabaseClient();
+  const phone = normalizePhone(detail.patient.phone);
+
+  const { error } = await supabase.from('ai_summary_requests').insert({
+    lead_id: detail.id,
+    clinic_id: detail.clinicId,
+    phone,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function fetchChatHistoryInSupabase(
+  clinicId: string,
+  phone: string,
+): Promise<LeadChatMessage[]> {
+  const supabase = getSupabaseClient();
+  const sessionIds = chatSessionCandidates(phone);
+
+  const { data: clinicLeads, error: leadError } = await supabase
+    .from('leads')
+    .select('phone')
+    .eq('clinic_id', clinicId);
+
+  if (leadError) {
+    throw new Error(leadError.message);
+  }
+
+  const clinicHasNumber = ((clinicLeads ?? []) as { phone: string }[]).some((lead) => {
+    const leadDigits = chatSessionCandidates(lead.phone);
+    return leadDigits.some((value) => sessionIds.includes(value));
+  });
+
+  if (!clinicHasNumber) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from('preet_n8n_chat_histories')
+    .select('id, session_id, message, updated_at')
+    .in('session_id', sessionIds)
+    .order('id', { ascending: true });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return ((data ?? []) as DbChatHistoryRow[]).map((row) => {
+    const sender = row.message?.type === 'ai' ? 'ai' : 'human';
+    return {
+      id: row.id,
+      sender,
+      content: extractChatContent(row.message?.content),
+      sentAt: row.updated_at,
+    };
+  });
 }

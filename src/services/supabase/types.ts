@@ -95,3 +95,21 @@ export interface DbNotification {
 export interface DbLeadWithRelations extends DbLead {
   lead_profile: DbLeadProfile | DbLeadProfile[] | null;
 }
+
+export interface DbAiSummaryRequest {
+  id: string;
+  lead_id: string;
+  clinic_id: string;
+  phone: string;
+  created_at: string;
+}
+
+export interface DbChatHistoryRow {
+  id: number;
+  session_id: string;
+  message: {
+    type?: string;
+    content?: unknown;
+  } | null;
+  updated_at: string | null;
+}

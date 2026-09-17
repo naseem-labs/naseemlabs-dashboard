@@ -5,6 +5,7 @@ import { DataLoadErrorScreen } from '../../components/common';
 import {
   ActionSystemCard,
   AddNoteModal,
+  ChatHistoryModal,
   GuideTheAgentCard,
   InternalNotesCard,
   LeadDetailHeader,
@@ -45,6 +46,16 @@ export function LeadDetailPage() {
     updateNote,
     deleteNote,
     updatePatientInfo,
+    isGeneratingSummary,
+    isSummaryPending,
+    summaryError,
+    showChat,
+    chatMessages,
+    isChatLoading,
+    chatError,
+    generateAiSummary,
+    openChat,
+    closeChat,
   } = useLeadDetail(leadId, data?.clinic.id, data?.user);
 
   if (isDashboardLoading || isLoading) {
@@ -124,7 +135,14 @@ export function LeadDetailPage() {
           </div>
 
           <div className="flex flex-col gap-4">
-            <PatientSnapshotCard profile={detail.leadProfile} />
+            <PatientSnapshotCard
+              profile={detail.leadProfile}
+              isGenerating={isGeneratingSummary}
+              isSummaryPending={isSummaryPending}
+              summaryError={summaryError}
+              onGenerateSummary={generateAiSummary}
+              onViewChat={openChat}
+            />
             <GuideTheAgentCard
               leadContext={detail.leadProfile.leadContext ?? ''}
               followupType={detail.followUp?.followupType ?? '-'}
@@ -159,6 +177,16 @@ export function LeadDetailPage() {
         isLoading={isActionLoading}
         onClose={() => setShowAddNote(false)}
         onSave={addNote}
+      />
+
+      <ChatHistoryModal
+        isOpen={showChat}
+        isLoading={isChatLoading}
+        error={chatError}
+        patientName={`${detail.patient.firstName} ${detail.patient.lastName}`.trim()}
+        patientPhone={detail.patient.phone}
+        messages={chatMessages}
+        onClose={closeChat}
       />
 
       {error ? (

@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { DashboardUser } from '../types/dashboard';
 import type {
+  LeadChatMessage,
   LeadDetailData,
   LostLeadReason,
   PatientInformation,
 } from '../types/leadDetail';
 import { leadDetailService } from '../services/leadDetail.service';
 import { getErrorMessage } from '../lib/supabaseErrors';
+import { getSupabaseClient, isSupabaseConfigured } from '../lib/supabase';
 
 export function useLeadDetail(leadId: string | undefined, clinicId: string | undefined, user: DashboardUser | undefined) {
   const [detail, setDetail] = useState<LeadDetailData | null>(null);
@@ -15,9 +17,61 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [showLostModal, setShowLostModal] = useState(false);
   const [showAddNote, setShowAddNote] = useState(false);
+  const [isGeneratingSummary, setIsGeneratingSummary] = useState(false);
+  const [isSummaryPending, setIsSummaryPending] = useState(false);
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<LeadChatMessage[]>([]);
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   const actorName = user ? `${user.firstName} ${user.lastName}` : 'Receptionist';
   const userId = user?.id ?? 'local-session-user';
+
+  const loadDetail = useCallback(async () => {
+    if (!leadId || !clinicId) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await leadDetailService.getLeadDetail(leadId, clinicId);
+      setDetail(data);
+    } catch (loadError) {
+      setError(getErrorMessage(loadError, 'Unable to load lead details.'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [clinicId, leadId]);
+
+  const syncPendingSummaryRequest = useCallback(async () => {
+    if (!leadId) {
+      return;
+    }
+
+    try {
+      const pending = await leadDetailService.hasPendingAiSummaryRequest(leadId);
+      setIsSummaryPending(pending);
+    } catch {
+      // Ignore background pending-check failures.
+    }
+  }, [leadId]);
+
+  const refreshDetail = useCallback(async () => {
+    if (!leadId || !clinicId) {
+      return;
+    }
+
+    try {
+      const data = await leadDetailService.getLeadDetail(leadId, clinicId);
+      setDetail(data);
+      await syncPendingSummaryRequest();
+    } catch {
+      // Ignore background refresh failures.
+    }
+  }, [clinicId, leadId, syncPendingSummaryRequest]);
 
   useEffect(() => {
     if (!leadId || !clinicId) {
@@ -34,6 +88,11 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
         const data = await leadDetailService.getLeadDetail(leadId, clinicId);
         if (isMounted) {
           setDetail(data);
+          void leadDetailService.hasPendingAiSummaryRequest(leadId).then((pending) => {
+            if (isMounted) {
+              setIsSummaryPending(pending);
+            }
+          });
         }
       } catch (loadError) {
         if (isMounted) {
@@ -53,23 +112,56 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     };
   }, [clinicId, leadId]);
 
-  const loadDetail = useCallback(async () => {
-    if (!leadId || !clinicId) {
+  useEffect(() => {
+    if (!leadId || !clinicId || !isSupabaseConfigured()) {
       return;
     }
 
-    setIsLoading(true);
-    setError(null);
+    const supabase = getSupabaseClient();
+    const channel = supabase
+      .channel(`lead-ai-summary-${leadId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'lead_profile',
+          filter: `lead_id=eq.${leadId}`,
+        },
+        () => {
+          void refreshDetail();
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'ai_summary_requests',
+          filter: `lead_id=eq.${leadId}`,
+        },
+        () => {
+          setIsSummaryPending(true);
+        },
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'ai_summary_requests',
+          filter: `lead_id=eq.${leadId}`,
+        },
+        () => {
+          void refreshDetail();
+        },
+      )
+      .subscribe();
 
-    try {
-      const data = await leadDetailService.getLeadDetail(leadId, clinicId);
-      setDetail(data);
-    } catch (loadError) {
-      setError(getErrorMessage(loadError, 'Unable to load lead details.'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [clinicId, leadId]);
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [clinicId, leadId, refreshDetail]);
 
   const runAction = useCallback(
     async (action: (current: LeadDetailData) => Promise<LeadDetailData>) => {
@@ -153,6 +245,51 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     [runAction],
   );
 
+  const generateAiSummary = useCallback(async () => {
+    if (!detail) {
+      return;
+    }
+
+    setIsGeneratingSummary(true);
+    setSummaryError(null);
+
+    try {
+      await leadDetailService.requestAiSummary(detail);
+      setIsSummaryPending(true);
+    } catch (requestError) {
+      setSummaryError(getErrorMessage(requestError, 'Could not request AI summary.'));
+    } finally {
+      setIsGeneratingSummary(false);
+    }
+  }, [detail]);
+
+  const openChat = useCallback(async () => {
+    if (!detail) {
+      return;
+    }
+
+    setShowChat(true);
+    setIsChatLoading(true);
+    setChatError(null);
+    setChatMessages([]);
+
+    try {
+      const messages = await leadDetailService.fetchChatHistory(
+        detail.clinicId,
+        detail.patient.phone,
+      );
+      setChatMessages(messages);
+    } catch (loadError) {
+      setChatError(getErrorMessage(loadError, 'Could not load chat history.'));
+    } finally {
+      setIsChatLoading(false);
+    }
+  }, [detail]);
+
+  const closeChat = useCallback(() => {
+    setShowChat(false);
+  }, []);
+
   return {
     detail,
     isLoading,
@@ -160,6 +297,13 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     isActionLoading,
     showLostModal,
     showAddNote,
+    isGeneratingSummary,
+    isSummaryPending,
+    summaryError,
+    showChat,
+    chatMessages,
+    isChatLoading,
+    chatError,
     setShowLostModal,
     setShowAddNote,
     startFollowUp,
@@ -172,6 +316,9 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     updateNote,
     deleteNote,
     updatePatientInfo,
+    generateAiSummary,
+    openChat,
+    closeChat,
     reload: loadDetail,
   };
 }

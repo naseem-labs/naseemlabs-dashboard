@@ -10,3 +10,4 @@ export { ActionSystemCard } from './ActionSystemCard';
 export { TimelineSection } from './TimelineSection';
 export { MarkLostLeadModal } from './MarkLostLeadModal';
 export { AddNoteModal } from './AddNoteModal';
+export { ChatHistoryModal } from './ChatHistoryModal';

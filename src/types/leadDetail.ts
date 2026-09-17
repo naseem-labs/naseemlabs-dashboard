@@ -130,3 +130,10 @@ export interface UpdateNotePayload {
   noteId: string;
   content: string;
 }
+
+export interface LeadChatMessage {
+  id: number;
+  sender: 'human' | 'ai';
+  content: string;
+  sentAt: string | null;
+}
