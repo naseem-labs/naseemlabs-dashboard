@@ -42,7 +42,7 @@ export function LeadsPage() {
 
   const handleNextActionClick = useCallback(async (lead: Lead) => {
     await handleNextAction(lead);
-    await reload();
+    await reload({ silent: true });
   }, [handleNextAction, reload]);
 
   if (isLoading) {

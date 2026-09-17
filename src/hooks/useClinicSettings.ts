@@ -4,6 +4,7 @@ import {
   saveClinicSettings,
   type ClinicSettings,
 } from '../services/supabase/settings.service';
+import { useSupabaseRealtime } from './useSupabaseRealtime';
 
 export function useClinicSettings() {
   const [settings, setSettings] = useState<ClinicSettings | null>(null);
@@ -42,6 +43,14 @@ export function useClinicSettings() {
       isMounted = false;
     };
   }, []);
+
+  useSupabaseRealtime(
+    'clinic-settings',
+    [{ table: 'clinics' }],
+    () => {
+      void fetchClinicSettings().then(setSettings).catch(() => undefined);
+    },
+  );
 
   const saveTimezone = useCallback(async (timezone: string) => {
     setIsSaving(true);

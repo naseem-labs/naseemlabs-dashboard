@@ -7,6 +7,7 @@ import {
   submitDoctorReview,
 } from '../services/supabase/doctor.service';
 import type { DoctorReviewLead } from '../services/supabase/doctor.service';
+import { useSupabaseRealtime } from './useSupabaseRealtime';
 
 export function useDoctorDashboard() {
   const [queue, setQueue] = useState<DoctorReviewLead[]>([]);
@@ -14,25 +15,44 @@ export function useDoctorDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const load = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const load = useCallback(async (silent = false) => {
+    if (!silent) {
+      setIsLoading(true);
+      setError(null);
+    }
 
     try {
       const items = await fetchDoctorReviewQueue();
       setQueue(items);
     } catch (loadError) {
-      setError(
-        loadError instanceof Error ? loadError.message : 'Unable to load doctor review queue.',
-      );
+      if (!silent) {
+        setError(
+          loadError instanceof Error ? loadError.message : 'Unable to load doctor review queue.',
+        );
+      }
     } finally {
-      setIsLoading(false);
+      if (!silent) {
+        setIsLoading(false);
+      }
     }
   }, []);
 
   useEffect(() => {
     void load();
   }, [load]);
+
+  useSupabaseRealtime(
+    'doctor-review-queue',
+    [
+      { table: 'leads' },
+      { table: 'lead_profile' },
+      { table: 'lead_photos' },
+      { table: 'lead_actions' },
+    ],
+    () => {
+      void load(true);
+    },
+  );
 
   const reviewLead = useCallback(
     async (
@@ -45,7 +65,7 @@ export function useDoctorDashboard() {
 
       try {
         await submitDoctorReview(leadId, decision, note);
-        await load();
+        await load(true);
       } catch (submitError) {
         setError(
           submitError instanceof Error ? submitError.message : 'Unable to submit doctor review.',

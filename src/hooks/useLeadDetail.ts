@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { DashboardUser } from '../types/dashboard';
 import type {
   LeadChatMessage,
@@ -8,7 +8,7 @@ import type {
 } from '../types/leadDetail';
 import { leadDetailService } from '../services/leadDetail.service';
 import { getErrorMessage } from '../lib/supabaseErrors';
-import { getSupabaseClient, isSupabaseConfigured } from '../lib/supabase';
+import { useSupabaseRealtime } from './useSupabaseRealtime';
 
 export function useLeadDetail(leadId: string | undefined, clinicId: string | undefined, user: DashboardUser | undefined) {
   const [detail, setDetail] = useState<LeadDetailData | null>(null);
@@ -112,56 +112,29 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     };
   }, [clinicId, leadId]);
 
-  useEffect(() => {
-    if (!leadId || !clinicId || !isSupabaseConfigured()) {
-      return;
-    }
+  const detailRealtimeTables = useMemo(
+    () =>
+      leadId
+        ? [
+            { table: 'leads', filter: `id=eq.${leadId}` },
+            { table: 'lead_profile', filter: `lead_id=eq.${leadId}` },
+            { table: 'lead_actions', filter: `lead_id=eq.${leadId}` },
+            { table: 'lead_photos', filter: `lead_id=eq.${leadId}` },
+            { table: 'followup_queue', filter: `lead_id=eq.${leadId}` },
+            { table: 'ai_summary_requests', filter: `lead_id=eq.${leadId}` },
+          ]
+        : [],
+    [leadId],
+  );
 
-    const supabase = getSupabaseClient();
-    const channel = supabase
-      .channel(`lead-ai-summary-${leadId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'lead_profile',
-          filter: `lead_id=eq.${leadId}`,
-        },
-        () => {
-          void refreshDetail();
-        },
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'ai_summary_requests',
-          filter: `lead_id=eq.${leadId}`,
-        },
-        () => {
-          setIsSummaryPending(true);
-        },
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'ai_summary_requests',
-          filter: `lead_id=eq.${leadId}`,
-        },
-        () => {
-          void refreshDetail();
-        },
-      )
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(channel);
-    };
-  }, [clinicId, leadId, refreshDetail]);
+  useSupabaseRealtime(
+    leadId && clinicId ? `lead-detail-${leadId}` : null,
+    detailRealtimeTables,
+    () => {
+      void refreshDetail();
+    },
+    Boolean(leadId && clinicId),
+  );
 
   const runAction = useCallback(
     async (action: (current: LeadDetailData) => Promise<LeadDetailData>) => {
@@ -263,6 +236,22 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     }
   }, [detail]);
 
+  const refreshChat = useCallback(async () => {
+    if (!detail) {
+      return;
+    }
+
+    try {
+      const messages = await leadDetailService.fetchChatHistory(
+        detail.clinicId,
+        detail.patient.phone,
+      );
+      setChatMessages(messages);
+    } catch (loadError) {
+      setChatError(getErrorMessage(loadError, 'Could not load chat history.'));
+    }
+  }, [detail]);
+
   const openChat = useCallback(async () => {
     if (!detail) {
       return;
@@ -289,6 +278,15 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
   const closeChat = useCallback(() => {
     setShowChat(false);
   }, []);
+
+  useSupabaseRealtime(
+    showChat && detail ? `lead-chat-${detail.id}` : null,
+    [{ table: 'preet_n8n_chat_histories' }],
+    () => {
+      void refreshChat();
+    },
+    Boolean(showChat && detail),
+  );
 
   return {
     detail,

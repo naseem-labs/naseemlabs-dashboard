@@ -3,12 +3,35 @@ import type { DashboardData, DashboardUser, LeadFilters, LeadStage } from '../ty
 import type { DashboardDataSource } from '../services/dashboard.service';
 import { dashboardService } from '../services/dashboard.service';
 import { getErrorMessage } from '../lib/supabaseErrors';
+import { useSupabaseRealtime } from './useSupabaseRealtime';
 
 export function useDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [dataSource, setDataSource] = useState<DashboardDataSource>('unconfigured');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const reload = useCallback(async (options?: { silent?: boolean }) => {
+    const silent = options?.silent ?? false;
+
+    if (!silent) {
+      setIsLoading(true);
+      setError(null);
+    }
+
+    try {
+      const dashboardData = await dashboardService.getDashboardData();
+      setData(dashboardData);
+    } catch (loadError) {
+      if (!silent) {
+        setError(getErrorMessage(loadError, 'Unable to load dashboard data.'));
+      }
+    } finally {
+      if (!silent) {
+        setIsLoading(false);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -45,19 +68,33 @@ export function useDashboard() {
     };
   }, []);
 
-  const reload = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
+  const clinicId = data?.clinic.id;
+  const realtimeTables = useMemo(
+    () =>
+      clinicId
+        ? [
+            { table: 'leads', filter: `clinic_id=eq.${clinicId}` },
+            { table: 'notifications', filter: `clinic_id=eq.${clinicId}` },
+            { table: 'followup_queue', filter: `clinic_id=eq.${clinicId}` },
+            { table: 'ai_summary_requests', filter: `clinic_id=eq.${clinicId}` },
+            { table: 'lead_profile' },
+            { table: 'lead_actions' },
+            { table: 'lead_photos' },
+            { table: 'clinics' },
+            { table: 'users' },
+          ]
+        : [],
+    [clinicId],
+  );
 
-    try {
-      const dashboardData = await dashboardService.getDashboardData();
-      setData(dashboardData);
-    } catch (loadError) {
-      setError(getErrorMessage(loadError, 'Unable to load dashboard data.'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  useSupabaseRealtime(
+    clinicId ? `dashboard-${clinicId}` : null,
+    realtimeTables,
+    () => {
+      void reload({ silent: true });
+    },
+    Boolean(clinicId),
+  );
 
   return {
     data,

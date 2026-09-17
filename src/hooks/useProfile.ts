@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { UserProfile } from '../types/profile';
 import { profileService } from '../services/profile.service';
+import { useSupabaseRealtime } from './useSupabaseRealtime';
 
 export function useProfile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -38,6 +39,14 @@ export function useProfile() {
       isMounted = false;
     };
   }, []);
+
+  useSupabaseRealtime(
+    'user-profile',
+    [{ table: 'users' }, { table: 'clinics' }],
+    () => {
+      void profileService.getProfile().then(setProfile).catch(() => undefined);
+    },
+  );
 
   const saveProfile = useCallback(async (nextProfile: UserProfile) => {
     setIsSaving(true);
