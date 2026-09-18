@@ -16,7 +16,15 @@ export function DashboardPage() {
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const { isDesktop } = useTablePageSize(tableContainerRef);
   const pageSize = 5;
-  const { data, isLoading, error, reload } = useDashboard();
+  const {
+    data,
+    isLoading,
+    error,
+    reload,
+    selectedDate,
+    setSelectedDate,
+    clearDateFilter,
+  } = useDashboard();
   const { unreadCount } = useNotifications();
   const { viewLead, handleNextAction } = useLeadWorkflow();
 
@@ -62,6 +70,11 @@ export function DashboardPage() {
       clinic={data.clinic}
       user={data.user}
       unreadNotificationCount={unreadCount}
+      dateFilter={{
+        selectedDate,
+        setSelectedDate,
+        clearDateFilter,
+      }}
     >
       <div
         className={`app-page flex flex-col gap-3 sm:gap-4 ${

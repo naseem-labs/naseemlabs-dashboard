@@ -49,6 +49,7 @@ export interface DbLeadProfile {
   ai_summary: string | null;
   lead_context: string | null;
   next_action: string | null;
+  consultation_booking_requested: boolean | null;
   updated_at: string | null;
 }
 

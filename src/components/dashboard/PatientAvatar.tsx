@@ -17,7 +17,7 @@ export function PatientAvatar({
 }: PatientAvatarProps) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-purple-100 font-semibold text-purple-700 ${sizeClasses[size]} ${className}`}
+      className={`inline-flex shrink-0 items-center justify-center rounded-full bg-indigo-100 font-semibold text-indigo-700 ${sizeClasses[size]} ${className}`}
       aria-hidden="true"
     >
       {initials}

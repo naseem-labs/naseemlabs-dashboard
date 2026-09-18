@@ -6,6 +6,12 @@ import { TopHeader } from './TopHeader';
 
 export type DashboardHeaderVariant = 'dashboard' | 'minimal';
 
+export interface DashboardDateFilterControls {
+  selectedDate: Date | null;
+  setSelectedDate: (date: Date | null) => void;
+  clearDateFilter: () => void;
+}
+
 export interface DashboardHeaderProps {
   user: DashboardUser;
   unreadNotificationCount: number;
@@ -18,6 +24,7 @@ export interface DashboardLayoutProps {
   unreadNotificationCount?: number;
   children: ReactNode;
   renderHeader?: (props: DashboardHeaderProps) => ReactNode;
+  dateFilter?: DashboardDateFilterControls;
   hideFooter?: boolean;
   scrollableMain?: boolean;
   headerVariant?: DashboardHeaderVariant;
@@ -29,6 +36,7 @@ function DashboardLayoutContent({
   unreadNotificationCount = 0,
   children,
   renderHeader,
+  dateFilter,
   scrollableMain = false,
   headerVariant = 'dashboard',
 }: DashboardLayoutProps) {
@@ -80,6 +88,7 @@ function DashboardLayoutContent({
               unreadNotificationCount={unreadNotificationCount}
               onOpenMobileMenu={toggleCollapse}
               variant={headerVariant}
+              dateFilter={dateFilter}
             />
           )}
 

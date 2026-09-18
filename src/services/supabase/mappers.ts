@@ -422,6 +422,7 @@ export function mapDbLeadToLeadDetail(
       aiSummary: profile?.ai_summary ?? 'No AI summary available.',
       leadContext: profile?.lead_context ?? 'No context available.',
       nextAction: nextActionLabels[profile?.next_action ?? ''] ?? 'No Action',
+      consultationBookingRequested: Boolean(profile?.consultation_booking_requested),
     },
     followUp: {
       followupType: followupLabels[followup?.followup_type ?? ''] ?? '',

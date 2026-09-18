@@ -157,6 +157,30 @@ export async function requestPhotosInSupabase(
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
+export async function sendConsultationInviteInSupabase(
+  detail: LeadDetailData,
+  userId: string,
+): Promise<LeadDetailData> {
+  const supabase = getSupabaseClient();
+  const { error } = await supabase
+    .from('lead_profile')
+    .update({ consultation_booking_requested: true })
+    .eq('lead_id', detail.id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  await insertAction(
+    detail.id,
+    userId,
+    'consultation_invite_sent',
+    'WhatsApp priority consultation invitation dispatched via system.',
+  );
+
+  return (await fetchLeadBundle(detail.id, detail.clinicId))!;
+}
+
 export async function sendToDoctorReviewInSupabase(
   detail: LeadDetailData,
   actorName: string,

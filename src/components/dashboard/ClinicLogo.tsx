@@ -32,7 +32,7 @@ export function ClinicLogo({
         />
       ) : (
         <span
-          className={`inline-flex ${sizeMap[size]} shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-purple-500 font-bold text-white shadow-lg shadow-purple-500/25`}
+          className={`inline-flex ${sizeMap[size]} shrink-0 items-center justify-center rounded-xl bg-indigo-600 font-bold text-white`}
           aria-hidden="true"
         >
           {clinic.logo_initials}

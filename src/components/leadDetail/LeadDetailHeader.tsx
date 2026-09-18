@@ -17,6 +17,7 @@ interface LeadDetailHeaderProps {
   detail: LeadDetailData;
   isActionLoading: boolean;
   onAddNote: () => void;
+  onSendConsultationInvite: () => void;
   onStartFollowUp: () => void;
   onPauseFollowUp: () => void;
   onRequestPhotos: () => void;
@@ -29,6 +30,7 @@ export function LeadDetailHeader({
   detail,
   isActionLoading,
   onAddNote,
+  onSendConsultationInvite,
   onStartFollowUp,
   onPauseFollowUp,
   onRequestPhotos,
@@ -104,6 +106,7 @@ export function LeadDetailHeader({
             <ActionsDropdown
               detail={detail}
               isLoading={isActionLoading}
+              onSendConsultationInvite={onSendConsultationInvite}
               onStartFollowUp={onStartFollowUp}
               onPauseFollowUp={onPauseFollowUp}
               onRequestPhotos={onRequestPhotos}
@@ -114,7 +117,7 @@ export function LeadDetailHeader({
                 <button
                   type="button"
                   disabled={isActionLoading}
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-purple-700 disabled:opacity-60 sm:flex-none"
+                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-800 px-3.5 py-2 text-xs font-medium text-white shadow-xs transition hover:bg-slate-900 disabled:opacity-60 sm:flex-none"
                 >
                   Actions
                   <ChevronDown size={16} />

@@ -7,6 +7,7 @@ import { useSupabaseRealtime } from './useSupabaseRealtime';
 
 export function useDashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [dataSource, setDataSource] = useState<DashboardDataSource>('unconfigured');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,7 +21,7 @@ export function useDashboard() {
     }
 
     try {
-      const dashboardData = await dashboardService.getDashboardData();
+      const dashboardData = await dashboardService.getDashboardData(selectedDate);
       setData(dashboardData);
     } catch (loadError) {
       if (!silent) {
@@ -31,7 +32,7 @@ export function useDashboard() {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [selectedDate]);
 
   useEffect(() => {
     let isMounted = true;
@@ -42,7 +43,7 @@ export function useDashboard() {
 
       try {
         const [dashboardData, source] = await Promise.all([
-          dashboardService.getDashboardData(),
+          dashboardService.getDashboardData(selectedDate),
           dashboardService.getDataSource(),
         ]);
 
@@ -66,7 +67,7 @@ export function useDashboard() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [selectedDate]);
 
   const clinicId = data?.clinic.id;
   const realtimeTables = useMemo(
@@ -96,12 +97,19 @@ export function useDashboard() {
     Boolean(clinicId),
   );
 
+  const clearDateFilter = useCallback(() => {
+    setSelectedDate(null);
+  }, []);
+
   return {
     data,
     dataSource,
     isLoading,
     error,
     reload,
+    selectedDate,
+    setSelectedDate,
+    clearDateFilter,
   };
 }
 

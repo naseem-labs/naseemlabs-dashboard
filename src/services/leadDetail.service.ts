@@ -16,6 +16,7 @@ import {
   pauseFollowUpInSupabase,
   requestAiSummaryInSupabase,
   requestPhotosInSupabase,
+  sendConsultationInviteInSupabase,
   sendToDoctorReviewInSupabase,
   startFollowUpInSupabase,
   updateNoteInSupabase,
@@ -70,6 +71,14 @@ export const leadDetailService = {
   ): Promise<LeadDetailData> {
     requireSupabase();
     return sendToDoctorReviewInSupabase(detail, actorName, userId);
+  },
+
+  async sendConsultationInvite(
+    detail: LeadDetailData,
+    userId: string,
+  ): Promise<LeadDetailData> {
+    requireSupabase();
+    return sendConsultationInviteInSupabase(detail, userId);
   },
 
   async markConsultationReady(

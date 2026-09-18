@@ -40,6 +40,7 @@ export function LeadDetailPage() {
     pauseFollowUp,
     requestPhotos,
     sendToDoctorReview,
+    sendConsultationInvite,
     markConsultationReady,
     markLostLead,
     addNote,
@@ -110,6 +111,7 @@ export function LeadDetailPage() {
           detail={detail}
           isActionLoading={isActionLoading}
           onAddNote={() => setShowAddNote(true)}
+          onSendConsultationInvite={sendConsultationInvite}
           onStartFollowUp={startFollowUp}
           onPauseFollowUp={pauseFollowUp}
           onRequestPhotos={requestPhotos}
@@ -154,6 +156,7 @@ export function LeadDetailPage() {
             <ActionSystemCard
               detail={detail}
               isLoading={isActionLoading}
+              onSendConsultationInvite={sendConsultationInvite}
               onStartFollowUp={startFollowUp}
               onPauseFollowUp={pauseFollowUp}
               onRequestPhotos={requestPhotos}

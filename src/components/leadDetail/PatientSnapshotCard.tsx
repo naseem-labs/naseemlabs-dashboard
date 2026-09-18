@@ -38,14 +38,14 @@ export function PatientSnapshotCard({
             type="button"
             onClick={onGenerateSummary}
             disabled={isGenerating}
-            className="rounded-md border border-purple-200 bg-purple-600 px-2 py-1 text-[10px] font-semibold leading-tight text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isGenerating ? 'Requesting...' : '💫 Generate AI Summary'}
           </button>
           <button
             type="button"
             onClick={onViewChat}
-            className="rounded-md border border-slate-200 bg-white px-2 py-1 text-[10px] font-semibold leading-tight text-purple-600 transition hover:bg-purple-50"
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs transition hover:bg-slate-50"
           >
             View Chat
           </button>

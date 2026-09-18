@@ -14,9 +14,9 @@ function requireSupabaseConfigured(): void {
 }
 
 export const dashboardService = {
-  async getDashboardData(): Promise<DashboardData> {
+  async getDashboardData(selectedDate?: Date | null): Promise<DashboardData> {
     requireSupabaseConfigured();
-    const data = await fetchSupabaseDashboardData();
+    const data = await fetchSupabaseDashboardData(selectedDate);
     if (!data) {
       throw new Error('Unable to load dashboard data from Supabase.');
     }

@@ -148,7 +148,7 @@ const TableRows = memo(function TableRows({
               <button
                 type="button"
                 onClick={() => onViewLead(lead.id)}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-purple-100"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-medium text-white shadow-sm transition hover:bg-indigo-700"
               >
                 View Patient
                 <ArrowRight size={14} aria-hidden="true" />
@@ -387,7 +387,7 @@ const LeadMobileCard = memo(function LeadMobileCard({
       <button
         type="button"
         onClick={() => onViewLead(lead.id)}
-        className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border-2 border-purple-600 bg-white px-4 py-2.5 text-sm font-semibold text-purple-600 transition hover:bg-purple-50"
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-xs font-medium text-white shadow-sm transition hover:bg-indigo-700"
       >
         View Patient
         <ArrowRight size={14} aria-hidden="true" />

@@ -62,6 +62,7 @@ function createRajeshKumarDetail(): LeadDetailData {
       aiSummary: 'Sample AI summary.',
       leadContext: 'Waiting for patient photos.',
       nextAction: 'Request Photos',
+      consultationBookingRequested: false,
     },
     followUp: {
       followupType: 'Photo Follow-up',
@@ -204,6 +205,7 @@ function createGenericDetail(lead: Lead): LeadDetailData {
       aiSummary: 'No AI summary available.',
       leadContext: 'No context available.',
       nextAction: lead.next_action.label,
+      consultationBookingRequested: false,
     },
     followUp: {
       followupType: '',

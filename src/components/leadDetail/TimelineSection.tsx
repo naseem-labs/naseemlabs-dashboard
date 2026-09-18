@@ -26,7 +26,7 @@ export function TimelineSection({ events }: TimelineSectionProps) {
         <button
           type="button"
           onClick={() => setIsOpen((current) => !current)}
-          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-purple-600 transition hover:bg-purple-50"
+          className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
           {isOpen ? 'Hide Timeline' : 'View Timeline'}
         </button>
@@ -39,7 +39,7 @@ export function TimelineSection({ events }: TimelineSectionProps) {
           <ol className="relative space-y-4 border-l border-slate-200 pl-4">
             {events.map((event) => (
               <li key={event.id} className="relative">
-                <span className="absolute -left-[1.35rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-purple-500 ring-2 ring-purple-100" />
+                <span className="absolute -left-[1.35rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-slate-600 ring-2 ring-slate-200" />
                 <p className="text-sm font-semibold text-navy">{event.title}</p>
                 {event.description ? (
                   <p className="text-sm text-slate-600">{event.description}</p>

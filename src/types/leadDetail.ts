@@ -64,6 +64,7 @@ export interface LeadProfile {
   aiSummary: string;
   leadContext: string;
   nextAction: string;
+  consultationBookingRequested: boolean;
 }
 
 export interface FollowUp {

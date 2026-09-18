@@ -11,7 +11,9 @@ import {
 import { createSignedPhotoUrls } from './photoStorage';
 import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbNotification } from './types';
 
-export async function fetchSupabaseDashboardData(): Promise<DashboardData | null> {
+export async function fetchSupabaseDashboardData(
+  selectedDate?: Date | null,
+): Promise<DashboardData | null> {
   if (!isSupabaseConfigured()) {
     return null;
   }
@@ -29,11 +31,27 @@ export async function fetchSupabaseDashboardData(): Promise<DashboardData | null
     throw new Error(clinicsError.message);
   }
 
-  const { data: leadRows, error: leadsError } = await supabase
+  let leadsQuery = supabase
     .from('leads')
     .select('*')
-    .eq('clinic_id', context.clinicId)
-    .order('updated_at', { ascending: false });
+    .eq('clinic_id', context.clinicId);
+
+  if (selectedDate) {
+    const startOfDay = new Date(selectedDate);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(selectedDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    leadsQuery = leadsQuery
+      .gte('created_at', startOfDay.toISOString())
+      .lte('created_at', endOfDay.toISOString());
+  }
+
+  const { data: leadRows, error: leadsError } = await leadsQuery.order(
+    'updated_at',
+    { ascending: false },
+  );
 
   if (leadsError) {
     throw new Error(leadsError.message);

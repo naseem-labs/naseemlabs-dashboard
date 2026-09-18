@@ -5,6 +5,7 @@ import type {
   LeadDetailData,
   LostLeadReason,
   PatientInformation,
+  TimelineEvent,
 } from '../types/leadDetail';
 import { leadDetailService } from '../services/leadDetail.service';
 import { getErrorMessage } from '../lib/supabaseErrors';
@@ -137,16 +138,45 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
   );
 
   const runAction = useCallback(
-    async (action: (current: LeadDetailData) => Promise<LeadDetailData>) => {
+    async (
+      action: (current: LeadDetailData) => Promise<LeadDetailData>,
+      timelineEntry?: Pick<TimelineEvent, 'title' | 'description' | 'actorName'>,
+    ) => {
       if (!detail) {
         return;
       }
 
+      const optimisticEvent = timelineEntry
+        ? {
+            ...timelineEntry,
+            id: `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+            createdAt: new Date().toISOString(),
+          }
+        : null;
+
       setIsActionLoading(true);
+      if (optimisticEvent) {
+        setDetail((current) =>
+          current
+            ? { ...current, timeline: [optimisticEvent, ...current.timeline] }
+            : current,
+        );
+      }
+
       try {
         const updated = await action(detail);
         setDetail(updated);
       } catch {
+        if (optimisticEvent) {
+          setDetail((current) =>
+            current
+              ? {
+                  ...current,
+                  timeline: current.timeline.filter((event) => event.id !== optimisticEvent.id),
+                }
+              : current,
+          );
+        }
         setError('Action failed. Please try again.');
       } finally {
         setIsActionLoading(false);
@@ -156,29 +186,60 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
   );
 
   const startFollowUp = useCallback(() => {
-    void runAction((current) => leadDetailService.startFollowUp(current, actorName, userId));
+    void runAction(
+      (current) => leadDetailService.startFollowUp(current, actorName, userId),
+      { title: 'Follow Up Started', actorName, description: 'Follow-up started.' },
+    );
   }, [actorName, runAction, userId]);
 
   const pauseFollowUp = useCallback(() => {
-    void runAction((current) => leadDetailService.pauseFollowUp(current, actorName, userId));
+    void runAction(
+      (current) => leadDetailService.pauseFollowUp(current, actorName, userId),
+      { title: 'Follow Up Paused', actorName, description: 'Follow-up paused.' },
+    );
   }, [actorName, runAction, userId]);
 
   const requestPhotos = useCallback(() => {
-    void runAction((current) => leadDetailService.requestPhotos(current, actorName, userId));
+    void runAction(
+      (current) => leadDetailService.requestPhotos(current, actorName, userId),
+      { title: 'Photos Requested', actorName, description: 'Patient photos requested.' },
+    );
   }, [actorName, runAction, userId]);
 
   const sendToDoctorReview = useCallback(() => {
-    void runAction((current) => leadDetailService.sendToDoctorReview(current, actorName, userId));
+    void runAction(
+      (current) => leadDetailService.sendToDoctorReview(current, actorName, userId),
+      { title: 'Sent For Doctor Review', actorName, description: 'Lead sent for doctor review.' },
+    );
+  }, [actorName, runAction, userId]);
+
+  const sendConsultationInvite = useCallback(() => {
+    void runAction(
+      (current) => leadDetailService.sendConsultationInvite(current, userId),
+      {
+        title: 'Consultation Invite Sent',
+        actorName,
+        description: 'WhatsApp priority consultation invitation dispatched via system.',
+      },
+    );
   }, [actorName, runAction, userId]);
 
   const markConsultationReady = useCallback(() => {
-    void runAction((current) => leadDetailService.markConsultationReady(current, actorName, userId));
+    void runAction(
+      (current) => leadDetailService.markConsultationReady(current, actorName, userId),
+      {
+        title: 'Consultation Ready Marked',
+        actorName,
+        description: 'Lead marked ready for consultation.',
+      },
+    );
   }, [actorName, runAction, userId]);
 
   const markLostLead = useCallback(
     (reason: LostLeadReason) => {
       void runAction((current) =>
         leadDetailService.markLostLead(current, actorName, userId, reason),
+        { title: 'Lead Marked Lost', actorName, description: 'Lead marked as lost.' },
       ).then(() => setShowLostModal(false));
     },
     [actorName, runAction, userId],
@@ -308,6 +369,7 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     pauseFollowUp,
     requestPhotos,
     sendToDoctorReview,
+    sendConsultationInvite,
     markConsultationReady,
     markLostLead,
     addNote,
