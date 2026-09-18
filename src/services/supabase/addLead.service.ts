@@ -80,11 +80,12 @@ export async function createLeadInSupabase(
   }
 
   if (input.note.trim()) {
-    const { error: noteError } = await supabase.from('lead_actions').insert({
+    const { error: noteError } = await supabase.from('internal_op_notes').insert({
       lead_id: lead.id,
-      user_id: createdBy,
-      action_type: 'internal_note',
-      action_note: input.note.trim(),
+      clinic_id: input.workspaceId,
+      phone_number: phone,
+      note_text: input.note.trim(),
+      created_by: createdBy,
     });
 
     if (noteError) {
@@ -114,4 +115,3 @@ export async function createLeadInSupabase(
 
   return { leadId: lead.id };
 }
-

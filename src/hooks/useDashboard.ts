@@ -71,20 +71,28 @@ export function useDashboard() {
 
   const clinicId = data?.clinic.id;
   const userId = data?.user.id;
+  const leadIds = useMemo(
+    () => data?.leads.map((lead) => lead.id) ?? [],
+    [data?.leads],
+  );
   const realtimeTables = useMemo(
     () =>
       clinicId
         ? [
             { table: 'leads', filter: `clinic_id=eq.${clinicId}` },
-            { table: 'lead_profile' },
-            { table: 'lead_actions' },
+            ...(leadIds.length
+              ? [
+                  { table: 'lead_profile', filter: `lead_id=in.(${leadIds.join(',')})` },
+                  { table: 'lead_actions', filter: `lead_id=in.(${leadIds.join(',')})` },
+                ]
+              : []),
             { table: 'clinics', filter: `id=eq.${clinicId}` },
             userId && userId !== 'local-session-user'
               ? { table: 'users', filter: `id=eq.${userId}` }
               : { table: 'users' },
           ]
         : [],
-    [clinicId, userId],
+    [clinicId, leadIds, userId],
   );
 
   useSupabaseRealtime(

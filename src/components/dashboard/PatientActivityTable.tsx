@@ -12,6 +12,7 @@ import {
 import type { Lead, LastActivity } from '../../types/dashboard';
 import { TABLE_LAYOUT } from '../../constants/table';
 import { STAGE_CONFIG } from '../../constants/stages';
+import { formatNextAction } from '../../lib/leadDisplay';
 import { PatientAvatar } from './PatientAvatar';
 
 interface PatientActivityTableProps {
@@ -141,7 +142,7 @@ const TableRows = memo(function TableRows({
                 onClick={() => onNextAction(lead)}
                 className={`text-sm font-semibold underline-offset-2 transition hover:underline ${actionVariantClasses[lead.next_action.variant]}`}
               >
-                {lead.next_action.label}
+                {formatNextAction(lead.next_action?.label)}
               </button>
             </td>
             <td className="px-5 py-4">
@@ -381,7 +382,7 @@ const LeadMobileCard = memo(function LeadMobileCard({
         onClick={() => onNextAction(lead)}
         className={`mb-2 text-left text-sm font-semibold ${actionVariantClasses[lead.next_action.variant]}`}
       >
-        {lead.next_action.label}
+        {formatNextAction(lead.next_action?.label)}
       </button>
 
       <button

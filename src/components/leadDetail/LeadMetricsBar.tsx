@@ -1,4 +1,5 @@
 import type { LeadMetrics } from '../../types/leadDetail';
+import { formatNextAction } from '../../lib/leadDisplay';
 
 interface LeadMetricsBarProps {
   metrics: LeadMetrics;
@@ -36,7 +37,7 @@ export function LeadMetricsBar({ metrics }: LeadMetricsBarProps) {
               VARIANT_CLASSES[item.variant ?? 'slate']
             }`}
           >
-            {item.value}
+            {item.label === 'Next Action' ? formatNextAction(item.value) : item.value}
           </p>
           {item.subValue ? (
             <p className="mt-0.5 text-xs text-slate-500">{item.subValue}</p>

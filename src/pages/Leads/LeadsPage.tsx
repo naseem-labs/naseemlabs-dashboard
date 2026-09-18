@@ -20,7 +20,7 @@ export function LeadsPage() {
   const stageParam = searchParams.get('stage');
   const initialStage = resolveStageFromQuery(stageParam);
 
-  const { data, isLoading, error, reload } = useDashboard();
+  const { data, isLoading, error } = useDashboard();
   const { unreadCount } = useNotifications();
   const { viewLead, handleNextAction } = useLeadWorkflow();
 
@@ -42,8 +42,7 @@ export function LeadsPage() {
 
   const handleNextActionClick = useCallback(async (lead: Lead) => {
     await handleNextAction(lead);
-    await reload({ silent: true });
-  }, [handleNextAction, reload]);
+  }, [handleNextAction]);
 
   if (isLoading) {
     return (

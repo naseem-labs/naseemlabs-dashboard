@@ -8,6 +8,7 @@ import type {
   NotificationItem,
 } from '../../types/dashboard';
 import { formatPhoneForDisplay } from '../../lib/phone';
+import { formatNextAction } from '../../lib/leadDisplay';
 import type {
   GuideItem,
   LeadDetailData,
@@ -425,7 +426,7 @@ export function mapDbLeadToLeadDetail(
     leadProfile: {
       aiSummary: profile?.ai_summary ?? 'No AI summary available.',
       leadContext: profile?.lead_context ?? 'No context available.',
-      nextAction: nextActionLabels[profile?.next_action ?? ''] ?? 'No Action',
+      nextAction: formatNextAction(nextActionLabels[profile?.next_action ?? '']),
       consultationBookingRequested: Boolean(profile?.consultation_booking_requested),
     },
     followUp: {
