@@ -4,17 +4,15 @@ import { DashboardLayout } from '../../components/dashboard';
 import { DataLoadErrorScreen } from '../../components/common';
 import {
   ActionSystemCard,
-  AddNoteModal,
   ChatHistoryModal,
   GuideTheAgentCard,
-  InternalNotesCard,
   LeadDetailHeader,
   LeadMetricsBar,
   MarkLostLeadModal,
   PatientInformationCard,
   PatientSnapshotCard,
   PhotosCard,
-  TimelineSection,
+  PatientActivityLogsCard,
 } from '../../components/leadDetail';
 import { ROUTES } from '../../constants/routes';
 import { useDashboard } from '../../hooks/useDashboard';
@@ -33,9 +31,7 @@ export function LeadDetailPage() {
     error,
     isActionLoading,
     showLostModal,
-    showAddNote,
     setShowLostModal,
-    setShowAddNote,
     startFollowUp,
     pauseFollowUp,
     requestPhotos,
@@ -43,9 +39,8 @@ export function LeadDetailPage() {
     sendConsultationInvite,
     markConsultationReady,
     markLostLead,
-    addNote,
-    updateNote,
-    deleteNote,
+    addStaffNote,
+    updateAiContext,
     updatePatientInfo,
     isGeneratingSummary,
     isSummaryPending,
@@ -106,11 +101,10 @@ export function LeadDetailPage() {
       hideFooter
       scrollableMain
     >
-      <div className="app-page flex w-full flex-col gap-4 lg:min-h-0">
+      <div className="app-page mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 sm:px-6 lg:min-h-0">
         <LeadDetailHeader
           detail={detail}
           isActionLoading={isActionLoading}
-          onAddNote={() => setShowAddNote(true)}
           onSendConsultationInvite={sendConsultationInvite}
           onStartFollowUp={startFollowUp}
           onPauseFollowUp={pauseFollowUp}
@@ -128,12 +122,15 @@ export function LeadDetailPage() {
               patientInfo={detail.patientInfo}
               onSave={updatePatientInfo}
             />
-            <InternalNotesCard
-              notes={detail.notes}
-              onUpdate={updateNote}
-              onDelete={deleteNote}
+            <PhotosCard photos={detail.photos} />
+            <PatientActivityLogsCard
+              timeline={detail.timeline}
+              staffNotes={detail.staffNotes}
+              aiContextIntel={detail.aiContextIntel}
+              isSaving={isActionLoading}
+              onAddStaffNote={addStaffNote}
+              onUpdateAiContext={updateAiContext}
             />
-            <TimelineSection events={detail.timeline} />
           </div>
 
           <div className="flex flex-col gap-4">
@@ -152,7 +149,6 @@ export function LeadDetailPage() {
               scheduledFor={detail.followUp?.scheduledFor ?? '-'}
               scheduledOn={detail.followUp?.createdAt ?? '-'}
             />
-            <PhotosCard photos={detail.photos} />
             <ActionSystemCard
               detail={detail}
               isLoading={isActionLoading}
@@ -173,13 +169,6 @@ export function LeadDetailPage() {
         isLoading={isActionLoading}
         onClose={() => setShowLostModal(false)}
         onConfirm={markLostLead}
-      />
-
-      <AddNoteModal
-        isOpen={showAddNote}
-        isLoading={isActionLoading}
-        onClose={() => setShowAddNote(false)}
-        onSave={addNote}
       />
 
       <ChatHistoryModal

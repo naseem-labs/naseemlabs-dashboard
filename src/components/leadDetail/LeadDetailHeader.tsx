@@ -5,7 +5,6 @@ import {
   MapPin,
   MessageCircle,
   Phone,
-  Plus,
 } from 'lucide-react';
 import type { LeadDetailData } from '../../types/leadDetail';
 import { LEAD_DETAIL_STAGE_CONFIG } from '../../constants/leadDetail';
@@ -16,7 +15,6 @@ import { ActionsDropdown } from './ActionsDropdown';
 interface LeadDetailHeaderProps {
   detail: LeadDetailData;
   isActionLoading: boolean;
-  onAddNote: () => void;
   onSendConsultationInvite: () => void;
   onStartFollowUp: () => void;
   onPauseFollowUp: () => void;
@@ -29,7 +27,6 @@ interface LeadDetailHeaderProps {
 export function LeadDetailHeader({
   detail,
   isActionLoading,
-  onAddNote,
   onSendConsultationInvite,
   onStartFollowUp,
   onPauseFollowUp,
@@ -93,15 +90,6 @@ export function LeadDetailHeader({
               <Phone size={16} className="text-white" />
               Call Patient
             </a>
-
-            <button
-              type="button"
-              onClick={onAddNote}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-navy transition hover:bg-slate-50 sm:flex-none"
-            >
-              <Plus size={16} />
-              Add Note
-            </button>
 
             <ActionsDropdown
               detail={detail}

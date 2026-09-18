@@ -7,6 +7,7 @@ import type {
 import { isSupabaseConfigured } from '../lib/supabase';
 import {
   addNoteInSupabase,
+  addStaffNoteInSupabase,
   deleteNoteInSupabase,
   fetchChatHistoryInSupabase,
   fetchSupabaseLeadDetail,
@@ -20,6 +21,7 @@ import {
   sendToDoctorReviewInSupabase,
   startFollowUpInSupabase,
   updateNoteInSupabase,
+  updateAiContextInSupabase,
   updatePatientInfoInSupabase,
 } from './supabase/leadDetail.service';
 
@@ -107,6 +109,20 @@ export const leadDetailService = {
   ): Promise<LeadDetailData> {
     requireSupabase();
     return addNoteInSupabase(detail, payload, userId);
+  },
+
+  async addStaffNote(
+    detail: LeadDetailData,
+    content: string,
+    userId: string,
+  ): Promise<LeadDetailData> {
+    requireSupabase();
+    return addStaffNoteInSupabase(detail, content, userId);
+  },
+
+  async updateAiContext(detail: LeadDetailData, content: string): Promise<LeadDetailData> {
+    requireSupabase();
+    return updateAiContextInSupabase(detail, content);
   },
 
   async updateNote(detail: LeadDetailData, payload: UpdateNotePayload): Promise<LeadDetailData> {

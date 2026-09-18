@@ -76,10 +76,10 @@ export function PatientInformationCard({
         )
       }
     >
-      <dl className="grid gap-3 sm:grid-cols-2">
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-2">
         {FIELDS.map((field) => (
           <div key={field.key}>
-            <dt className="text-xs font-medium text-slate-500">{field.label}</dt>
+            <dt className="text-xs text-slate-400 sm:font-medium sm:text-slate-500">{field.label}</dt>
             {isEditing ? (
               <input
                 type={field.type ?? 'text'}
@@ -104,7 +104,7 @@ export function PatientInformationCard({
                 className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-navy focus:border-purple-400 focus:outline-none"
               />
             ) : (
-              <dd className="mt-0.5 text-sm font-medium text-navy">
+              <dd className="mt-0.5 break-words text-sm font-medium text-slate-800 sm:text-navy">
                 {patientInfo[field.key] ?? '—'}
               </dd>
             )}
@@ -112,8 +112,8 @@ export function PatientInformationCard({
         ))}
 
         <div>
-          <dt className="text-xs font-medium text-slate-500">Created On</dt>
-          <dd className="mt-0.5 text-sm font-medium text-navy">
+          <dt className="text-xs text-slate-400 sm:font-medium sm:text-slate-500">Created On</dt>
+          <dd className="mt-0.5 break-words text-sm font-medium text-slate-800 sm:text-navy">
             {formatDisplayDate(patientInfo.createdOn)}
           </dd>
         </div>

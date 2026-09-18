@@ -19,11 +19,13 @@ import { LEAD_DETAIL_STAGE_CONFIG } from '../../constants/leadDetail';
 import { CONCERN_AREA_OPTIONS } from '../../constants/addLead';
 import type {
   DbClinic,
+  DbInternalOpNote,
   DbLead,
   DbLeadAction,
   DbLeadPhoto,
   DbLeadProfile,
   DbNotification,
+  DbPreetPatientMemory,
   DbUser,
   DbFollowupQueue,
 } from './types';
@@ -333,6 +335,8 @@ export function mapDbLeadToLeadDetail(
   followup: DbFollowupQueue | null,
   actorNames: Record<string, string>,
   signedUrls: Record<string, string> = {},
+  staffNotes: DbInternalOpNote[] = [],
+  aiContextMemory: DbPreetPatientMemory | null = null,
 ): LeadDetailData {
   const detailStage = mapDbLeadToDetailStage(lead);
   const stageConfig = LEAD_DETAIL_STAGE_CONFIG[detailStage];
@@ -439,9 +443,16 @@ export function mapDbLeadToLeadDetail(
       createdAt: action.created_at ?? new Date().toISOString(),
       updatedAt: action.created_at ?? new Date().toISOString(),
     })),
+    staffNotes: staffNotes.map((note) => ({
+      id: note.id,
+      content: note.note_text,
+      authorName: note.created_by ? actorNames[note.created_by] ?? 'Staff' : 'Staff',
+      createdAt: note.created_at ?? new Date().toISOString(),
+    })),
     timeline: timelineActions.map((action) =>
       mapActionToTimeline(action, action.user_id ? actorNames[action.user_id] : undefined),
     ),
+    aiContextIntel: aiContextMemory?.ai_context_intel ?? null,
     doctorReviewStatus:
       lead.doctor_review_status && lead.doctor_review_status !== 'none'
         ? lead.doctor_review_status

@@ -120,6 +120,7 @@ function createRajeshKumarDetail(): LeadDetailData {
         updatedAt: '2026-06-16T18:00:00Z',
       },
     ],
+    staffNotes: [],
     timeline: [
       {
         id: 'timeline-1',
@@ -142,6 +143,7 @@ function createRajeshKumarDetail(): LeadDetailData {
         createdAt: '2026-06-17T05:30:00Z',
       },
     ],
+    aiContextIntel: null,
     doctorReviewStatus: 'Not Requested',
   };
 }
@@ -225,6 +227,7 @@ function createGenericDetail(lead: Lead): LeadDetailData {
       { id: `photo-${lead.id}-4`, label: 'Donor Area', status: 'missing', storageUrl: null },
     ],
     notes: [],
+    staffNotes: [],
     timeline: [
       {
         id: `timeline-${lead.id}-1`,
@@ -232,6 +235,7 @@ function createGenericDetail(lead: Lead): LeadDetailData {
         createdAt: lead.created_at,
       },
     ],
+    aiContextIntel: null,
     doctorReviewStatus:
       stage === 'doctor_review_requested' ? 'Requested' : 'Not Requested',
   };

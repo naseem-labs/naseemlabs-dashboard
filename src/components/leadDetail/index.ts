@@ -3,6 +3,7 @@ export { LeadDetailHeader } from './LeadDetailHeader';
 export { LeadMetricsBar } from './LeadMetricsBar';
 export { PatientInformationCard } from './PatientInformationCard';
 export { PatientSnapshotCard } from './PatientSnapshotCard';
+export { PatientActivityLogsCard } from './PatientActivityLogsCard';
 export { GuideTheAgentCard } from './GuideTheAgentCard';
 export { InternalNotesCard } from './InternalNotesCard';
 export { PhotosCard } from './PhotosCard';

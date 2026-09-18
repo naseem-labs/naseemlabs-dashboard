@@ -12,7 +12,16 @@ import { getSupabaseClient } from '../../lib/supabase';
 import { mapDbLeadToLeadDetail } from './mappers';
 import { createSignedPhotoUrls } from './photoStorage';
 import { mapDetailStageToDb } from './stageMapping';
-import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbChatHistoryRow, DbUser } from './types';
+import type {
+  DbChatHistoryRow,
+  DbInternalOpNote,
+  DbLead,
+  DbLeadAction,
+  DbLeadPhoto,
+  DbLeadProfile,
+  DbPreetPatientMemory,
+  DbUser,
+} from './types';
 
 async function fetchLeadBundle(leadId: string, clinicId: string) {
   const supabase = getSupabaseClient();
@@ -37,6 +46,8 @@ async function fetchLeadBundle(leadId: string, clinicId: string) {
     { data: actions },
     { data: photos },
     { data: followup },
+    { data: staffNotes },
+    { data: aiContextMemory },
   ] = await Promise.all([
     supabase.from('lead_profile').select('*').eq('lead_id', leadId).maybeSingle<DbLeadProfile>(),
     supabase
@@ -51,10 +62,24 @@ async function fetchLeadBundle(leadId: string, clinicId: string) {
       .eq('lead_id', leadId)
       .order('created_at', { ascending: false })
       .limit(1),
+    supabase
+      .from('internal_op_notes')
+      .select('*')
+      .eq('lead_id', leadId)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('preet_patient_memory')
+      .select('clinic_id, session_id, ai_context_intel')
+      .eq('clinic_id', clinicId)
+      .eq('session_id', normalizePhone(lead.phone))
+      .maybeSingle<DbPreetPatientMemory>(),
   ]);
 
   const userIds = Array.from(
-    new Set(((actions ?? []) as DbLeadAction[]).map((action) => action.user_id).filter(Boolean)),
+    new Set([
+      ...((actions ?? []) as DbLeadAction[]).map((action) => action.user_id),
+      ...((staffNotes ?? []) as DbInternalOpNote[]).map((note) => note.created_by),
+    ].filter(Boolean)),
   ) as string[];
 
   let actorNames: Record<string, string> = {};
@@ -76,6 +101,8 @@ async function fetchLeadBundle(leadId: string, clinicId: string) {
     (followup ?? [])[0] ?? null,
     actorNames,
     signedUrls,
+    (staffNotes ?? []) as DbInternalOpNote[],
+    (aiContextMemory as DbPreetPatientMemory | null) ?? null,
   );
 }
 
@@ -235,6 +262,61 @@ export async function addNoteInSupabase(
   userId: string,
 ): Promise<LeadDetailData> {
   await insertAction(detail.id, userId, 'internal_note', payload.content.trim());
+  return (await fetchLeadBundle(detail.id, detail.clinicId))!;
+}
+
+export async function addStaffNoteInSupabase(
+  detail: LeadDetailData,
+  content: string,
+  userId: string,
+): Promise<LeadDetailData> {
+  const supabase = getSupabaseClient();
+  const { error } = await supabase.from('internal_op_notes').insert({
+    lead_id: detail.id,
+    clinic_id: detail.clinicId,
+    phone_number: normalizePhone(detail.patient.phone),
+    note_text: content.trim(),
+    created_by: userId === 'local-session-user' ? null : userId,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return (await fetchLeadBundle(detail.id, detail.clinicId))!;
+}
+
+export async function updateAiContextInSupabase(
+  detail: LeadDetailData,
+  content: string,
+): Promise<LeadDetailData> {
+  const supabase = getSupabaseClient();
+  const sessionId = normalizePhone(detail.patient.phone);
+  const trimmedContent = content.trim();
+  const { data: updatedMemory, error: updateError } = await supabase
+    .from('preet_patient_memory')
+    .update({ ai_context_intel: trimmedContent, updated_at: new Date().toISOString() })
+    .eq('clinic_id', detail.clinicId)
+    .eq('session_id', sessionId)
+    .select('clinic_id')
+    .maybeSingle();
+
+  if (updateError) {
+    throw new Error(updateError.message);
+  }
+
+  if (!updatedMemory) {
+    const { error: insertError } = await supabase.from('preet_patient_memory').insert({
+      clinic_id: detail.clinicId,
+      session_id: sessionId,
+      ai_context_intel: trimmedContent,
+    });
+
+    if (insertError) {
+      throw new Error(insertError.message);
+    }
+  }
+
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 

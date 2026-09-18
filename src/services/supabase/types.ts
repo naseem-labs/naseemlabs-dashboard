@@ -62,6 +62,22 @@ export interface DbLeadAction {
   created_at: string | null;
 }
 
+export interface DbInternalOpNote {
+  id: string;
+  lead_id: string;
+  clinic_id: string;
+  phone_number: string;
+  note_text: string;
+  created_by: string | null;
+  created_at: string | null;
+}
+
+export interface DbPreetPatientMemory {
+  clinic_id: string;
+  session_id: string;
+  ai_context_intel: string | null;
+}
+
 export interface DbLeadPhoto {
   id: string;
   lead_id: string;

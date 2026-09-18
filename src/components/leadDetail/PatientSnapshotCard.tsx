@@ -32,20 +32,22 @@ export function PatientSnapshotCard({
   return (
     <LeadDetailCard
       title="AI Summary"
+      headerClassName="flex w-full items-center justify-between gap-2"
+      titleClassName="whitespace-nowrap text-sm font-semibold text-slate-900"
       action={
-        <div className="flex flex-wrap items-center justify-end gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5">
           <button
             type="button"
             onClick={onGenerateSummary}
             disabled={isGenerating}
-            className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-7 items-center gap-1 rounded-md bg-indigo-600 px-2 py-1 text-xs font-medium whitespace-nowrap text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isGenerating ? 'Requesting...' : '💫 Generate AI Summary'}
           </button>
           <button
             type="button"
             onClick={onViewChat}
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs transition hover:bg-slate-50"
+            className="h-7 rounded-md border border-slate-200 bg-white px-2 py-1 text-xs font-medium whitespace-nowrap text-slate-700 shadow-xs transition hover:bg-slate-50"
           >
             View Chat
           </button>

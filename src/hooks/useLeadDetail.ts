@@ -254,6 +254,46 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     [actorName, runAction, userId],
   );
 
+  const addStaffNote = useCallback(
+    async (content: string) => {
+      if (!detail || !content.trim()) {
+        return;
+      }
+
+      setIsActionLoading(true);
+      setError(null);
+      try {
+        const updated = await leadDetailService.addStaffNote(detail, content, userId);
+        setDetail(updated);
+      } catch (saveError) {
+        setError(getErrorMessage(saveError, 'Unable to save staff note.'));
+      } finally {
+        setIsActionLoading(false);
+      }
+    },
+    [detail, userId],
+  );
+
+  const updateAiContext = useCallback(
+    async (content: string) => {
+      if (!detail) {
+        return;
+      }
+
+      setIsActionLoading(true);
+      setError(null);
+      try {
+        const updated = await leadDetailService.updateAiContext(detail, content);
+        setDetail(updated);
+      } catch (saveError) {
+        setError(getErrorMessage(saveError, 'Unable to update AI context.'));
+      } finally {
+        setIsActionLoading(false);
+      }
+    },
+    [detail],
+  );
+
   const updateNote = useCallback(
     (noteId: string, content: string) => {
       void runAction((current) =>
@@ -373,6 +413,8 @@ export function useLeadDetail(leadId: string | undefined, clinicId: string | und
     markConsultationReady,
     markLostLead,
     addNote,
+    addStaffNote,
+    updateAiContext,
     updateNote,
     deleteNote,
     updatePatientInfo,

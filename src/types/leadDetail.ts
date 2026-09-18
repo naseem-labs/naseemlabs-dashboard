@@ -95,6 +95,13 @@ export interface InternalNote {
   updatedAt: string;
 }
 
+export interface StaffNote {
+  id: string;
+  content: string;
+  authorName: string;
+  createdAt: string;
+}
+
 export interface TimelineEvent {
   id: string;
   title: string;
@@ -118,7 +125,9 @@ export interface LeadDetailData {
   guideItems: GuideItem[];
   photos: LeadPhoto[];
   notes: InternalNote[];
+  staffNotes: StaffNote[];
   timeline: TimelineEvent[];
+  aiContextIntel: string | null;
   doctorReviewStatus: string;
 }
 
