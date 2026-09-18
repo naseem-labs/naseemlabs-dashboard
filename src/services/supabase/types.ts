@@ -58,7 +58,6 @@ export interface DbLeadAction {
   lead_id: string;
   user_id: string | null;
   action_type: string;
-  action_note: string | null;
   created_at: string | null;
 }
 

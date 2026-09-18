@@ -98,7 +98,7 @@ function mapActionToActivity(action: DbLeadAction | undefined): LastActivity {
 
   return {
     label: formatRelativeTime(action.created_at),
-    description: action.action_note ?? action.action_type.replace(/_/g, ' '),
+    description: action.action_type.replace(/_/g, ' '),
     icon: iconMap[action.action_type] ?? 'message',
   };
 }
@@ -280,7 +280,6 @@ function mapActionToTimeline(action: DbLeadAction, actorName?: string): Timeline
   return {
     id: action.id,
     title: action.action_type.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-    description: action.action_note ?? undefined,
     actorName,
     createdAt: action.created_at ?? new Date().toISOString(),
   };
@@ -343,7 +342,6 @@ export function mapDbLeadToLeadDetail(
   const stageConfig = LEAD_DETAIL_STAGE_CONFIG[detailStage];
   const { firstName, lastName } = splitPatientName(lead.name);
   const timelineActions = actions.filter((action) => action.action_type !== 'internal_note');
-  const noteActions = actions.filter((action) => action.action_type === 'internal_note');
   const latestAction = timelineActions[0];
 
   const nextActionLabels: Record<string, string> = {
@@ -380,7 +378,7 @@ export function mapDbLeadToLeadDetail(
     lastActivity: {
       label: 'Last Activity',
       value: formatRelativeTime(latestAction?.created_at ?? lead.updated_at),
-      subValue: latestAction?.action_note ?? latestAction?.action_type?.replace(/_/g, ' '),
+      subValue: latestAction?.action_type?.replace(/_/g, ' '),
       variant: 'slate',
     },
     doctorReview: {
@@ -437,12 +435,12 @@ export function mapDbLeadToLeadDetail(
     },
     guideItems: buildGuideItems(profile, lead),
     photos: buildLeadPhotos(photos, signedUrls),
-    notes: noteActions.map((action) => ({
-      id: action.id,
-      content: action.action_note ?? '',
-      authorName: action.user_id ? actorNames[action.user_id] ?? 'Staff' : 'Staff',
-      createdAt: action.created_at ?? new Date().toISOString(),
-      updatedAt: action.created_at ?? new Date().toISOString(),
+    notes: staffNotes.map((note) => ({
+      id: note.id,
+      content: note.note_text,
+      authorName: note.created_by ? actorNames[note.created_by] ?? 'Staff' : 'Staff',
+      createdAt: note.created_at ?? new Date().toISOString(),
+      updatedAt: note.created_at ?? new Date().toISOString(),
     })),
     staffNotes: staffNotes.map((note) => ({
       id: note.id,

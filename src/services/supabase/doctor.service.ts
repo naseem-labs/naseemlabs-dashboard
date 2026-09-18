@@ -121,7 +121,7 @@ export async function fetchDoctorReviewQueue(): Promise<DoctorReviewLead[]> {
 export async function submitDoctorReview(
   leadId: string,
   decision: 'approved' | 'needs_more_info' | 'not_suitable',
-  note: string,
+  _note: string,
 ): Promise<LeadDetailData | null> {
   const session = authService.getSession();
   const context = await resolveWorkspaceContext(session?.user?.email);
@@ -138,7 +138,7 @@ export async function submitDoctorReview(
     lead_id: leadId,
     doctor_id: doctorId,
     decision,
-    note: note.trim() || null,
+    note: _note.trim() || null,
   });
 
   if (reviewError) {
@@ -167,7 +167,6 @@ export async function submitDoctorReview(
     lead_id: leadId,
     user_id: doctorId,
     action_type: 'doctor_review_completed',
-    action_note: `Decision: ${decision.replace(/_/g, ' ')}${note.trim() ? `. ${note.trim()}` : ''}`,
   });
 
   await supabase.from('notifications').insert({

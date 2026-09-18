@@ -55,7 +55,7 @@ export async function fetchSupabaseDashboardData(
       leadIds.length
         ? supabase
             .from('lead_actions')
-            .select('lead_id, action_type, action_note, created_at')
+            .select('lead_id, action_type, created_at')
             .in('lead_id', leadIds)
             .order('created_at', { ascending: false })
         : Promise.resolve({ data: [] as DbLeadAction[] }),

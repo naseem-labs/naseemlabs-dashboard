@@ -7,7 +7,6 @@ import type {
   UpdateNotePayload,
 } from '../../types/leadDetail';
 import { normalizePhone } from '../../lib/phone';
-import { getLostReasonLabel } from '../../constants/leadDetail';
 import { getSupabaseClient } from '../../lib/supabase';
 import { mapDbLeadToLeadDetail } from './mappers';
 import { createSignedPhotoUrls } from './photoStorage';
@@ -110,14 +109,12 @@ async function insertAction(
   leadId: string,
   userId: string | null,
   actionType: string,
-  actionNote?: string,
 ) {
   const supabase = getSupabaseClient();
   const { error } = await supabase.from('lead_actions').insert({
     lead_id: leadId,
     user_id: userId && userId !== 'local-session-user' ? userId : null,
     action_type: actionType,
-    action_note: actionNote ?? null,
   });
 
   if (error) {
@@ -146,7 +143,7 @@ export async function fetchSupabaseLeadDetail(
 
 export async function startFollowUpInSupabase(
   detail: LeadDetailData,
-  actorName: string,
+  _actorName: string,
   userId: string,
 ): Promise<LeadDetailData> {
   await updateLeadRow(detail.id, {
@@ -154,27 +151,27 @@ export async function startFollowUpInSupabase(
     followup_active: true,
     doctor_review_status: 'none',
   });
-  await insertAction(detail.id, userId, 'follow_up_started', `By ${actorName}`);
+  await insertAction(detail.id, userId, 'follow_up_started');
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
 export async function pauseFollowUpInSupabase(
   detail: LeadDetailData,
-  actorName: string,
+  _actorName: string,
   userId: string,
 ): Promise<LeadDetailData> {
   await updateLeadRow(detail.id, { stage: 'new', followup_active: false });
-  await insertAction(detail.id, userId, 'follow_up_paused', `By ${actorName}`);
+  await insertAction(detail.id, userId, 'follow_up_paused');
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
 export async function requestPhotosInSupabase(
   detail: LeadDetailData,
-  actorName: string,
+  _actorName: string,
   userId: string,
 ): Promise<LeadDetailData> {
   await updateLeadRow(detail.id, { stage: 'waiting_for_photos', followup_active: true });
-  await insertAction(detail.id, userId, 'photos_requested', `By ${actorName}`);
+  await insertAction(detail.id, userId, 'photos_requested');
 
   const supabase = getSupabaseClient();
   await supabase
@@ -198,19 +195,14 @@ export async function sendConsultationInviteInSupabase(
     throw new Error(error.message);
   }
 
-  await insertAction(
-    detail.id,
-    userId,
-    'consultation_invite_sent',
-    'WhatsApp priority consultation invitation dispatched via system.',
-  );
+  await insertAction(detail.id, userId, 'consultation_invite_sent');
 
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
 export async function sendToDoctorReviewInSupabase(
   detail: LeadDetailData,
-  actorName: string,
+  _actorName: string,
   userId: string,
 ): Promise<LeadDetailData> {
   await updateLeadRow(detail.id, {
@@ -218,28 +210,28 @@ export async function sendToDoctorReviewInSupabase(
     followup_active: true,
     doctor_review_status: 'requested',
   });
-  await insertAction(detail.id, userId, 'sent_for_doctor_review', `By ${actorName}`);
+  await insertAction(detail.id, userId, 'sent_for_doctor_review');
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
 export async function markConsultationReadyInSupabase(
   detail: LeadDetailData,
-  actorName: string,
+  _actorName: string,
   userId: string,
 ): Promise<LeadDetailData> {
   await updateLeadRow(detail.id, {
     stage: 'consultation_ready',
     followup_active: false,
   });
-  await insertAction(detail.id, userId, 'consultation_ready_marked', `By ${actorName}`);
+  await insertAction(detail.id, userId, 'consultation_ready_marked');
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
 export async function markLostLeadInSupabase(
   detail: LeadDetailData,
-  actorName: string,
+  _actorName: string,
   userId: string,
-  reason: LostLeadReason,
+  _reason: LostLeadReason,
 ): Promise<LeadDetailData> {
   const mapped = mapDetailStageToDb('lost_lead');
   await updateLeadRow(detail.id, {
@@ -247,12 +239,7 @@ export async function markLostLeadInSupabase(
     followup_active: mapped.followupActive,
     doctor_review_status: 'none',
   });
-  await insertAction(
-    detail.id,
-    userId,
-    'lead_marked_lost',
-    `By ${actorName}. Reason: ${getLostReasonLabel(reason)}`,
-  );
+  await insertAction(detail.id, userId, 'lead_marked_lost');
   return (await fetchLeadBundle(detail.id, detail.clinicId))!;
 }
 
@@ -261,8 +248,7 @@ export async function addNoteInSupabase(
   payload: AddNotePayload,
   userId: string,
 ): Promise<LeadDetailData> {
-  await insertAction(detail.id, userId, 'internal_note', payload.content.trim());
-  return (await fetchLeadBundle(detail.id, detail.clinicId))!;
+  return addStaffNoteInSupabase(detail, payload.content, userId);
 }
 
 export async function addStaffNoteInSupabase(
@@ -326,10 +312,10 @@ export async function updateNoteInSupabase(
 ): Promise<LeadDetailData> {
   const supabase = getSupabaseClient();
   const { error } = await supabase
-    .from('lead_actions')
-    .update({ action_note: payload.content.trim() })
+    .from('internal_op_notes')
+    .update({ note_text: payload.content.trim() })
     .eq('id', payload.noteId)
-    .eq('action_type', 'internal_note');
+    .eq('lead_id', detail.id);
 
   if (error) {
     throw new Error(error.message);
@@ -344,10 +330,10 @@ export async function deleteNoteInSupabase(
 ): Promise<LeadDetailData> {
   const supabase = getSupabaseClient();
   const { error } = await supabase
-    .from('lead_actions')
+    .from('internal_op_notes')
     .delete()
     .eq('id', noteId)
-    .eq('action_type', 'internal_note');
+    .eq('lead_id', detail.id);
 
   if (error) {
     throw new Error(error.message);

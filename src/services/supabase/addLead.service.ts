@@ -72,7 +72,6 @@ export async function createLeadInSupabase(
     lead_id: lead.id,
     user_id: createdBy,
     action_type: 'lead_created',
-    action_note: `Inquiry received via ${input.leadSource.replace(/_/g, ' ')}`,
   });
 
   if (createdActionError) {
