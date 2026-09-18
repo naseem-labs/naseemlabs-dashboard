@@ -19,7 +19,7 @@ export function LeadDetailCard({
 }: LeadDetailCardProps) {
   return (
     <section
-      className={`app-glass-card app-glass-card--solid w-full overflow-hidden p-5 ${className}`}
+      className={`app-glass-card app-glass-card--solid box-border w-full min-w-0 max-w-full overflow-hidden p-5 ${className}`}
     >
       <div className={headerClassName}>
         <h2 className={titleClassName}>{title}</h2>

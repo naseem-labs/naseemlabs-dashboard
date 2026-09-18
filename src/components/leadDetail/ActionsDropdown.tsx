@@ -52,11 +52,16 @@ export function ActionsDropdown({
   const isLost = detail.stage === 'lost_lead';
 
   return (
-    <div ref={containerRef} className="relative flex-1 sm:flex-none">
-      <div onClick={() => !isLoading && setIsOpen((open) => !open)}>{trigger}</div>
+    <div ref={containerRef} className="relative min-w-0 flex-1 sm:flex-none">
+      <div
+        className="min-w-0"
+        onClick={() => !isLoading && setIsOpen((open) => !open)}
+      >
+        {trigger}
+      </div>
 
       {isOpen ? (
-        <div className="absolute right-0 z-30 mt-2 w-64 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+        <div className="absolute right-0 z-30 mt-2 w-64 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
           <DropdownItem
             label={inviteSent ? 'Consultation Invite Sent ✓' : '📅 Send Consultation Invite'}
             onClick={() => closeAndRun(onSendConsultationInvite)}

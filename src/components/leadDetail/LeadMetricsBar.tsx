@@ -22,11 +22,11 @@ export function LeadMetricsBar({ metrics }: LeadMetricsBarProps) {
   ];
 
   return (
-    <div className="grid shrink-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid w-full min-w-0 max-w-full shrink-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {items.map((item) => (
         <div
           key={item.label}
-          className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
+          className="box-border w-full min-w-0 max-w-full rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm"
         >
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             {item.label}

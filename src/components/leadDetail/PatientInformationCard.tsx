@@ -76,10 +76,10 @@ export function PatientInformationCard({
         )
       }
     >
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-2">
+      <dl className="grid w-full min-w-0 grid-cols-1 gap-y-3.5 sm:grid-cols-2 sm:gap-x-4">
         {FIELDS.map((field) => (
-          <div key={field.key}>
-            <dt className="text-xs text-slate-400 sm:font-medium sm:text-slate-500">{field.label}</dt>
+          <div key={field.key} className="min-w-0">
+            <dt className="block min-w-0 break-words text-xs font-medium text-slate-400 sm:text-sm">{field.label}</dt>
             {isEditing ? (
               <input
                 type={field.type ?? 'text'}
@@ -101,19 +101,19 @@ export function PatientInformationCard({
                           : event.target.value,
                   }))
                 }
-                className="mt-1 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-navy focus:border-purple-400 focus:outline-none"
+                className="mt-1 min-w-0 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-navy focus:border-purple-400 focus:outline-none"
               />
             ) : (
-              <dd className="mt-0.5 break-words text-sm font-medium text-slate-800 sm:text-navy">
+              <dd className="mt-0.5 min-w-0 break-words text-sm font-medium text-slate-800 sm:text-base">
                 {patientInfo[field.key] ?? '—'}
               </dd>
             )}
           </div>
         ))}
 
-        <div>
-          <dt className="text-xs text-slate-400 sm:font-medium sm:text-slate-500">Created On</dt>
-          <dd className="mt-0.5 break-words text-sm font-medium text-slate-800 sm:text-navy">
+        <div className="min-w-0">
+          <dt className="block min-w-0 break-words text-xs font-medium text-slate-400 sm:text-sm">Created On</dt>
+          <dd className="mt-0.5 min-w-0 break-words text-sm font-medium text-slate-800 sm:text-base">
             {formatDisplayDate(patientInfo.createdOn)}
           </dd>
         </div>

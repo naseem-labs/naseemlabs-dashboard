@@ -101,7 +101,7 @@ export function LeadDetailPage() {
       hideFooter
       scrollableMain
     >
-      <div className="app-page mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 sm:px-6 lg:min-h-0">
+      <div className="app-page mx-auto flex w-full max-w-full overflow-x-hidden flex-col gap-4 px-3 sm:px-6 lg:min-h-0">
         <LeadDetailHeader
           detail={detail}
           isActionLoading={isActionLoading}
@@ -116,8 +116,8 @@ export function LeadDetailPage() {
 
         <LeadMetricsBar metrics={detail.metrics} />
 
-        <div className="grid flex-1 gap-4 lg:grid-cols-2 lg:min-h-0 lg:overflow-y-auto lg:pb-1">
-          <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 w-full max-w-full gap-4 lg:grid-cols-2 lg:min-h-0 lg:overflow-y-auto lg:pb-1">
+          <div className="flex min-w-0 flex-col gap-4">
             <PatientInformationCard
               patientInfo={detail.patientInfo}
               onSave={updatePatientInfo}
@@ -133,7 +133,7 @@ export function LeadDetailPage() {
             />
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div className="flex min-w-0 flex-col gap-4">
             <PatientSnapshotCard
               profile={detail.leadProfile}
               isGenerating={isGeneratingSummary}

@@ -34,20 +34,20 @@ export function GuideTheAgentCard({
     <LeadDetailCard title="Lead Context">
       <p className="mb-4 text-sm text-navy">{leadContext}</p>
       <dl className="space-y-3 text-sm">
-        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
-          <dt className="font-semibold text-slate-600">Follow-up Type</dt>
+        <div className="grid min-w-0 grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-x-3 gap-y-1 sm:grid-cols-[minmax(7rem,9rem)_1fr]">
+          <dt className="min-w-0 break-words font-semibold text-slate-600">Follow-up Type</dt>
           <dd className="min-w-0 break-words text-navy">{followupType}</dd>
         </div>
-        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
-          <dt className="font-semibold text-slate-600">Reason</dt>
+        <div className="grid min-w-0 grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-x-3 gap-y-1 sm:grid-cols-[minmax(7rem,9rem)_1fr]">
+          <dt className="min-w-0 break-words font-semibold text-slate-600">Reason</dt>
           <dd className="min-w-0 break-words text-navy">{followupReason}</dd>
         </div>
-        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
-          <dt className="font-semibold text-slate-600">Next Follow-up</dt>
+        <div className="grid min-w-0 grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-x-3 gap-y-1 sm:grid-cols-[minmax(7rem,9rem)_1fr]">
+          <dt className="min-w-0 break-words font-semibold text-slate-600">Next Follow-up</dt>
           <dd className="min-w-0 break-words text-navy">{formatDateTime(scheduledFor)}</dd>
         </div>
-        <div className="grid grid-cols-[minmax(7rem,9rem)_1fr] items-start gap-x-3 gap-y-1">
-          <dt className="font-semibold text-slate-600">Scheduled On</dt>
+        <div className="grid min-w-0 grid-cols-[minmax(0,7rem)_minmax(0,1fr)] items-start gap-x-3 gap-y-1 sm:grid-cols-[minmax(7rem,9rem)_1fr]">
+          <dt className="min-w-0 break-words font-semibold text-slate-600">Scheduled On</dt>
           <dd className="min-w-0 break-words text-navy">{formatDateTime(scheduledOn)}</dd>
         </div>
       </dl>

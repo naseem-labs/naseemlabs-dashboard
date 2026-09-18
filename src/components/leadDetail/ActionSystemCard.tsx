@@ -29,7 +29,7 @@ export function ActionSystemCard({
   return (
     <section
       tabIndex={0}
-      className="group rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm outline-none"
+      className="group box-border w-full max-w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm outline-none"
     >
       <h2 className="text-sm font-semibold text-navy group-hover:mb-4 group-focus-within:mb-4 [@media(hover:none)]:mb-4">
         Action System
@@ -37,7 +37,7 @@ export function ActionSystemCard({
 
       <div className="grid grid-rows-[0fr] overflow-hidden transition-[grid-template-rows] duration-200 group-hover:grid-rows-[1fr] group-focus-within:grid-rows-[1fr] [@media(hover:none)]:grid-rows-[1fr]">
         <div className="min-h-0 overflow-hidden">
-          <div className="flex flex-col gap-2.5">
+          <div className="flex w-full flex-col gap-2">
             {inviteSent ? (
               <ActionButton
                 label="Consultation Invite Sent ✓"
@@ -116,13 +116,13 @@ function ActionButton({
 }) {
   const styles = {
     primary:
-      'bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm border-transparent',
+      'bg-emerald-600 hover:bg-emerald-700 text-white sm:font-semibold sm:py-2.5 sm:px-4 sm:rounded-xl shadow-sm border-transparent',
     sent:
-      'bg-emerald-100 text-emerald-800 border border-emerald-300 font-semibold py-2.5 px-4 rounded-xl',
+      'bg-emerald-100 text-emerald-800 border border-emerald-300 sm:font-semibold sm:py-2.5 sm:px-4 sm:rounded-xl',
     secondary:
-      'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-medium py-2 px-4 rounded-xl',
+      'bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 sm:py-2 sm:px-4 sm:rounded-xl',
     danger:
-      'bg-rose-50/40 hover:bg-rose-50 text-rose-600 border border-rose-200/70 font-medium py-2 px-4 rounded-xl',
+      'bg-rose-50/40 hover:bg-rose-50 text-rose-600 border border-rose-200/70 sm:py-2 sm:px-4 sm:rounded-xl',
   } as const;
 
   return (
@@ -130,7 +130,7 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex w-full items-center justify-center gap-2 text-sm transition disabled:cursor-not-allowed disabled:opacity-50 ${styles[variant]}`}
+      className={`flex h-9 w-full min-w-0 items-center justify-center gap-1.5 break-words rounded-lg px-4 py-2 text-center text-xs font-medium transition disabled:cursor-not-allowed disabled:opacity-50 sm:h-auto sm:gap-2 sm:rounded-xl sm:text-sm ${styles[variant]}`}
     >
       {label}
     </button>

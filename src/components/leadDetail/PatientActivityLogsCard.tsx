@@ -72,12 +72,12 @@ export function PatientActivityLogsCard({
   };
 
   return (
-    <section className="flex min-h-[220px] flex-col justify-between rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+    <section className="box-border flex min-h-[220px] w-full min-w-0 max-w-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="whitespace-nowrap text-sm font-semibold text-slate-900">Activity Logs</h2>
 
         <div
-          className="flex w-full gap-1 rounded-lg bg-slate-50 p-1 sm:w-auto"
+          className="no-scrollbar flex max-w-full items-center gap-1 overflow-x-auto py-1 sm:w-auto"
           role="tablist"
           aria-label="Patient activity views"
         >
@@ -92,7 +92,7 @@ export function PatientActivityLogsCard({
               role="tab"
               aria-selected={activeTab === tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex-1 whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-medium transition-colors duration-150 sm:flex-none ${
+              className={`shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${
                 activeTab === tab
                   ? 'border-slate-200/60 bg-white text-blue-600 shadow-sm'
                   : 'border-transparent text-slate-500 hover:bg-blue-50/60 hover:text-blue-600'
@@ -113,9 +113,9 @@ export function PatientActivityLogsCard({
               {timeline.map((event) => (
                 <li key={event.id} className="relative">
                   <span className="absolute -left-[1.35rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-slate-600 ring-2 ring-slate-200" />
-                  <p className="text-sm font-semibold text-slate-800">{event.title}</p>
+                  <p className="min-w-0 break-words text-sm font-semibold text-slate-800">{event.title}</p>
                   {event.description ? (
-                    <p className="mt-0.5 text-sm text-slate-600">{event.description}</p>
+                    <p className="mt-0.5 min-w-0 break-words text-sm text-slate-600">{event.description}</p>
                   ) : null}
                   <p className="mt-1 text-xs text-slate-400">
                     By {event.actorName ?? 'Staff'} • {formatTimelineDate(event.createdAt)}
@@ -179,7 +179,7 @@ export function PatientActivityLogsCard({
                     key={note.id}
                     className="mb-2.5 rounded-xl border border-slate-200/80 bg-slate-50 p-3.5 last:mb-0"
                   >
-                    <p className="text-sm text-slate-700">{note.content}</p>
+                    <p className="min-w-0 break-words text-sm text-slate-700">{note.content}</p>
                     <p className="mt-2 text-xs text-slate-400">
                       {note.authorName} · {formatRelativeTime(note.createdAt)}
                     </p>

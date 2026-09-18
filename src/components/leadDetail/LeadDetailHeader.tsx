@@ -39,10 +39,10 @@ export function LeadDetailHeader({
   const telHref = `tel:${detail.patient.phone.replace(/\s/g, '')}`;
 
   return (
-    <header className="shrink-0 rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
+    <header className="box-border w-full min-w-0 max-w-full shrink-0 overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-4 shadow-sm sm:p-5">
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex min-w-0 items-start gap-3">
+          <div className="flex w-full min-w-0 items-start gap-3 sm:w-auto">
             <Link
               to={ROUTES.LEADS}
               className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-purple-600"
@@ -59,7 +59,7 @@ export function LeadDetailHeader({
 
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-xl font-bold text-navy sm:text-2xl">
+                <h1 className="min-w-0 break-words text-xl font-bold text-navy sm:text-2xl">
                   {detail.patient.firstName} {detail.patient.lastName}
                 </h1>
                 <span
@@ -70,11 +70,11 @@ export function LeadDetailHeader({
               </div>
 
               <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-600">
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex min-w-0 max-w-full items-start gap-1.5 break-words">
                   <MessageCircle size={14} className="text-green-500" />
                   {detail.patient.phone}
                 </span>
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex min-w-0 max-w-full items-start gap-1.5 break-words">
                   <MapPin size={14} className="text-purple-500" />
                   {detail.patient.location}
                 </span>
@@ -82,10 +82,10 @@ export function LeadDetailHeader({
             </div>
           </div>
 
-          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
             <a
               href={telHref}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold !text-white shadow-sm transition hover:bg-green-700 sm:flex-none"
+              className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-xl bg-green-600 px-4 py-2.5 text-sm font-semibold !text-white shadow-sm transition hover:bg-green-700 sm:flex-none"
             >
               <Phone size={16} className="text-white" />
               Call Patient
@@ -105,7 +105,7 @@ export function LeadDetailHeader({
                 <button
                   type="button"
                   disabled={isActionLoading}
-                  className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-800 px-3.5 py-2 text-xs font-medium text-white shadow-xs transition hover:bg-slate-900 disabled:opacity-60 sm:flex-none"
+                  className="inline-flex min-w-0 w-full flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-medium text-white shadow-xs transition hover:bg-slate-900 disabled:opacity-60 sm:w-auto sm:flex-none"
                 >
                   Actions
                   <ChevronDown size={16} />
