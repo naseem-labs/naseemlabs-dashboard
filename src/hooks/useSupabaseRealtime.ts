@@ -9,7 +9,7 @@ export interface RealtimeTable {
 export function useSupabaseRealtime(
   channelName: string | null,
   tables: RealtimeTable[],
-  onChange: () => void,
+  onChange: () => void | Promise<void>,
   enabled = true,
 ) {
   const onChangeRef = useRef(onChange);
@@ -28,11 +28,36 @@ export function useSupabaseRealtime(
 
     const supabase = getSupabaseClient();
     let timeoutId: number | undefined;
+    let refreshInFlight = false;
+    let refreshPending = false;
+    let isActive = true;
+
+    const runRefresh = () => {
+      if (refreshInFlight) {
+        refreshPending = true;
+        return;
+      }
+
+      refreshInFlight = true;
+
+      Promise.resolve()
+        .then(() => onChangeRef.current())
+        .catch(() => undefined)
+        .finally(() => {
+          refreshInFlight = false;
+
+          if (isActive && refreshPending) {
+            refreshPending = false;
+            runRefresh();
+          }
+        });
+    };
 
     const schedule = () => {
       window.clearTimeout(timeoutId);
       timeoutId = window.setTimeout(() => {
-        onChangeRef.current();
+        timeoutId = undefined;
+        runRefresh();
       }, 350);
     };
 
@@ -54,6 +79,8 @@ export function useSupabaseRealtime(
     channel.subscribe();
 
     return () => {
+      isActive = false;
+      refreshPending = false;
       window.clearTimeout(timeoutId);
       void supabase.removeChannel(channel);
     };

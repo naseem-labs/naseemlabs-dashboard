@@ -70,22 +70,21 @@ export function useDashboard() {
   }, [selectedDate]);
 
   const clinicId = data?.clinic.id;
+  const userId = data?.user.id;
   const realtimeTables = useMemo(
     () =>
       clinicId
         ? [
             { table: 'leads', filter: `clinic_id=eq.${clinicId}` },
-            { table: 'notifications', filter: `clinic_id=eq.${clinicId}` },
-            { table: 'followup_queue', filter: `clinic_id=eq.${clinicId}` },
-            { table: 'ai_summary_requests', filter: `clinic_id=eq.${clinicId}` },
             { table: 'lead_profile' },
             { table: 'lead_actions' },
-            { table: 'lead_photos' },
-            { table: 'clinics' },
-            { table: 'users' },
+            { table: 'clinics', filter: `id=eq.${clinicId}` },
+            userId && userId !== 'local-session-user'
+              ? { table: 'users', filter: `id=eq.${userId}` }
+              : { table: 'users' },
           ]
         : [],
-    [clinicId],
+    [clinicId, userId],
   );
 
   useSupabaseRealtime(

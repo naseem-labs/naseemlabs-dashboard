@@ -4,12 +4,9 @@ import { authService } from '../auth.service';
 import { resolveWorkspaceContext } from './clinicContext';
 import {
   computeKpiStats,
-  mapDbClinicToClinic,
   mapDbLeadToLead,
-  mapDbNotification,
 } from './mappers';
-import { createSignedPhotoUrls } from './photoStorage';
-import type { DbLead, DbLeadAction, DbLeadPhoto, DbLeadProfile, DbNotification } from './types';
+import type { DbLead, DbLeadAction, DbLeadProfile } from './types';
 
 export async function fetchSupabaseDashboardData(
   selectedDate?: Date | null,
@@ -22,18 +19,11 @@ export async function fetchSupabaseDashboardData(
   const context = await resolveWorkspaceContext(session?.user?.email);
   const supabase = getSupabaseClient();
 
-  const { data: clinicRows, error: clinicsError } = await supabase
-    .from('clinics')
-    .select('*')
-    .order('name');
-
-  if (clinicsError) {
-    throw new Error(clinicsError.message);
-  }
-
   let leadsQuery = supabase
     .from('leads')
-    .select('*')
+    .select(
+      'id, clinic_id, name, phone, city, stage, followup_active, doctor_review_status, created_at, updated_at',
+    )
     .eq('clinic_id', context.clinicId);
 
   if (selectedDate) {
@@ -60,27 +50,18 @@ export async function fetchSupabaseDashboardData(
   const leads = (leadRows ?? []) as DbLead[];
   const leadIds = leads.map((lead) => lead.id);
 
-  const [{ data: actionRows }, { data: profileRows }, { data: photoRows }, { data: notificationRows }] =
+  const [{ data: actionRows }, { data: profileRows }] =
     await Promise.all([
       leadIds.length
         ? supabase
             .from('lead_actions')
-            .select('*')
+            .select('lead_id, action_type, action_note, created_at')
             .in('lead_id', leadIds)
             .order('created_at', { ascending: false })
         : Promise.resolve({ data: [] as DbLeadAction[] }),
       leadIds.length
-        ? supabase.from('lead_profile').select('*').in('lead_id', leadIds)
+        ? supabase.from('lead_profile').select('lead_id, next_action').in('lead_id', leadIds)
         : Promise.resolve({ data: [] as DbLeadProfile[] }),
-      leadIds.length
-        ? supabase.from('lead_photos').select('*').in('lead_id', leadIds)
-        : Promise.resolve({ data: [] as DbLeadPhoto[] }),
-      supabase
-        .from('notifications')
-        .select('*')
-        .eq('clinic_id', context.clinicId)
-        .order('created_at', { ascending: false })
-        .limit(20),
     ]);
 
   const actionsByLead = new Map<string, DbLeadAction[]>();
@@ -95,32 +76,20 @@ export async function fetchSupabaseDashboardData(
     profilesByLead.set(profile.lead_id, profile);
   }
 
-  const photosByLead = new Map<string, DbLeadPhoto[]>();
-  for (const photo of (photoRows ?? []) as DbLeadPhoto[]) {
-    const existing = photosByLead.get(photo.lead_id) ?? [];
-    existing.push(photo);
-    photosByLead.set(photo.lead_id, existing);
-  }
-
-  const allPhotos = (photoRows ?? []) as DbLeadPhoto[];
-  const signedUrls = await createSignedPhotoUrls(allPhotos);
-
   const mappedLeads = leads.map((lead) =>
     mapDbLeadToLead(
       lead,
       actionsByLead.get(lead.id)?.[0],
       profilesByLead.get(lead.id) ?? null,
-      photosByLead.get(lead.id) ?? [],
-      signedUrls,
     ),
   );
 
   return {
     clinic: context.clinic,
     user: context.user,
-    clinics: (clinicRows ?? []).map(mapDbClinicToClinic),
+    clinics: [],
     kpi_stats: computeKpiStats(leads),
     leads: mappedLeads,
-    notifications: ((notificationRows ?? []) as DbNotification[]).map(mapDbNotification),
+    notifications: [],
   };
 }

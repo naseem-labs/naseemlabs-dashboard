@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { DashboardLayout } from '../../components/dashboard';
@@ -15,15 +16,48 @@ import {
   PatientActivityLogsCard,
 } from '../../components/leadDetail';
 import { ROUTES } from '../../constants/routes';
-import { useDashboard } from '../../hooks/useDashboard';
 import { useLeadDetail } from '../../hooks/useLeadDetail';
 import { useNotifications } from '../../hooks/useNotifications';
+import { getErrorMessage } from '../../lib/supabaseErrors';
+import {
+  resolveWorkspaceContext,
+  type WorkspaceContext,
+} from '../../services/supabase/clinicContext';
 
 
 export function LeadDetailPage() {
   const { leadId } = useParams<{ leadId: string }>();
-  const { data, isLoading: isDashboardLoading, error: dashboardError } = useDashboard();
+  const [workspace, setWorkspace] = useState<WorkspaceContext | null>(null);
+  const [isWorkspaceLoading, setIsWorkspaceLoading] = useState(true);
+  const [workspaceError, setWorkspaceError] = useState<string | null>(null);
   const { unreadCount } = useNotifications();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadWorkspace = async () => {
+      try {
+        const context = await resolveWorkspaceContext();
+        if (isMounted) {
+          setWorkspace(context);
+        }
+      } catch (loadError) {
+        if (isMounted) {
+          setWorkspaceError(getErrorMessage(loadError, 'Unable to load workspace context.'));
+        }
+      } finally {
+        if (isMounted) {
+          setIsWorkspaceLoading(false);
+        }
+      }
+    };
+
+    void loadWorkspace();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const {
     detail,
@@ -52,9 +86,9 @@ export function LeadDetailPage() {
     generateAiSummary,
     openChat,
     closeChat,
-  } = useLeadDetail(leadId, data?.clinic.id, data?.user);
+  } = useLeadDetail(leadId, workspace?.clinicId, workspace?.user);
 
-  if (isDashboardLoading || isLoading) {
+  if (isWorkspaceLoading || isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-surface text-sm text-slate-500">
         Loading lead...
@@ -62,10 +96,10 @@ export function LeadDetailPage() {
     );
   }
 
-  if (dashboardError || !data) {
+  if (workspaceError || !workspace) {
     return (
       <DataLoadErrorScreen
-        error={dashboardError}
+        error={workspaceError}
         fallbackMessage="Unable to load lead."
       />
     );
@@ -74,8 +108,8 @@ export function LeadDetailPage() {
   if (!detail) {
     return (
       <DashboardLayout
-        clinic={data.clinic}
-        user={data.user}
+        clinic={workspace.clinic}
+        user={workspace.user}
         unreadNotificationCount={unreadCount}
       >
         <div className="app-glass-card app-glass-card--solid mx-auto max-w-3xl p-8 text-center">
@@ -95,8 +129,8 @@ export function LeadDetailPage() {
 
   return (
     <DashboardLayout
-      clinic={data.clinic}
-      user={data.user}
+      clinic={workspace.clinic}
+      user={workspace.user}
       unreadNotificationCount={unreadCount}
       hideFooter
       scrollableMain
