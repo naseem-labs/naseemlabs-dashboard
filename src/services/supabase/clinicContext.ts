@@ -17,6 +17,9 @@ export interface WorkspaceContext {
   clinic: ReturnType<typeof mapDbClinicToClinic>;
 }
 
+let cachedWorkspaceContext: { key: string; context: WorkspaceContext } | null = null;
+let workspaceContextRequest: { key: string; promise: Promise<WorkspaceContext> } | null = null;
+
 export function getStoredClinicId(): string | null {
   try {
     return localStorage.getItem(CLINIC_ID_STORAGE_KEY);
@@ -27,7 +30,11 @@ export function getStoredClinicId(): string | null {
 
 export function setStoredClinicId(clinicId: string): void {
   try {
+    const previousClinicId = localStorage.getItem(CLINIC_ID_STORAGE_KEY);
     localStorage.setItem(CLINIC_ID_STORAGE_KEY, clinicId);
+    if (previousClinicId !== clinicId) {
+      cachedWorkspaceContext = null;
+    }
   } catch {
     // Ignore storage errors
   }
@@ -48,7 +55,7 @@ async function loadClinicById(clinicId: string): Promise<DbClinic | null> {
   return data;
 }
 
-export async function resolveWorkspaceContext(
+async function loadWorkspaceContext(
   email?: string,
   preferredClinicId?: string,
 ): Promise<WorkspaceContext> {
@@ -111,4 +118,54 @@ export async function resolveWorkspaceContext(
     clinic: mapDbClinicToClinic(clinicRow),
     user,
   };
+}
+
+function getWorkspaceContextKey(email?: string, preferredClinicId?: string): string {
+  const session = authService.getSession();
+  const ownerEmail = email ?? session?.user?.email ?? '';
+  const storedClinicId = preferredClinicId ?? getStoredClinicId() ?? '';
+
+  return [
+    session?.accessToken ?? '',
+    session?.issuedAt ?? '',
+    session?.user?.id ?? '',
+    session?.user?.email ?? '',
+    session?.user?.clinicId ?? '',
+    session?.user?.role ?? '',
+    ownerEmail,
+    storedClinicId,
+  ].join('|');
+}
+
+export function resolveWorkspaceContext(
+  email?: string,
+  preferredClinicId?: string,
+): Promise<WorkspaceContext> {
+  const key = getWorkspaceContextKey(email, preferredClinicId);
+
+  if (cachedWorkspaceContext?.key === key) {
+    return Promise.resolve(cachedWorkspaceContext.context);
+  }
+
+  if (workspaceContextRequest?.key === key) {
+    return workspaceContextRequest.promise;
+  }
+
+  const request = loadWorkspaceContext(email, preferredClinicId)
+    .then((context) => {
+      cachedWorkspaceContext = { key, context };
+      if (workspaceContextRequest?.promise === request) {
+        workspaceContextRequest = null;
+      }
+      return context;
+    })
+    .catch((error: unknown) => {
+      if (workspaceContextRequest?.promise === request) {
+        workspaceContextRequest = null;
+      }
+      throw error;
+    });
+
+  workspaceContextRequest = { key, promise: request };
+  return request;
 }

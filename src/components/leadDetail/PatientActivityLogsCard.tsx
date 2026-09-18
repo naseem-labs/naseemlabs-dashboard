@@ -72,52 +72,135 @@ export function PatientActivityLogsCard({
   };
 
   return (
-    <section className="box-border flex min-h-[220px] w-full min-w-0 max-w-full flex-col justify-between overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="whitespace-nowrap text-sm font-semibold text-slate-900">Activity Logs</h2>
+    <section className="box-border flex min-h-[220px] w-full min-w-0 max-w-full flex-col rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+      <div className="hidden items-center gap-2 border-b border-slate-100 pb-3 md:flex">
+        <h2 className="min-w-0 flex-1 whitespace-nowrap text-sm font-semibold text-slate-900">
+          Activity Logs
+        </h2>
 
-        <div
-          className="no-scrollbar flex max-w-full items-center gap-1 overflow-x-auto py-1 sm:w-auto"
-          role="tablist"
-          aria-label="Patient activity views"
-        >
-          {([
-            ['timeline', `Timeline (${timeline.length})`],
-            ['notes', `Staff Notes (${staffNotes.length})`],
-            ['context', '● AI Context'],
-          ] as const).map(([tab, label]) => (
+        <div className="flex min-w-0 items-center justify-end gap-1.5">
+          <div
+            className="flex w-auto flex-nowrap items-center gap-0.5 rounded-lg border border-slate-200/80 bg-slate-50 p-0.5"
+            role="tablist"
+            aria-label="Patient activity views"
+          >
+            {([
+              ['timeline', 'Timeline'],
+              ['notes', 'Staff Notes'],
+              ['context', 'AI Context'],
+            ] as const).map(([tab, label]) => (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+                className={`shrink-0 whitespace-nowrap rounded-md border px-1.5 py-1 text-[10px] font-medium transition-colors duration-150 ${
+                  activeTab === tab
+                    ? 'border-blue-200 bg-blue-50 text-blue-600 shadow-none'
+                    : 'border-transparent bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {activeTab === 'notes' ? (
             <button
-              key={tab}
               type="button"
-              role="tab"
-              aria-selected={activeTab === tab}
-              onClick={() => setActiveTab(tab)}
-              className={`shrink-0 whitespace-nowrap rounded-md border px-2.5 py-1 text-xs font-medium transition-colors duration-150 ${
-                activeTab === tab
-                  ? 'border-slate-200/60 bg-white text-blue-600 shadow-sm'
-                  : 'border-transparent text-slate-500 hover:bg-blue-50/60 hover:text-blue-600'
-              }`}
+              onClick={() => setIsAddingNote((current) => !current)}
+              aria-label="Add Staff Note"
+              title="Add Staff Note"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-base font-medium leading-none text-white shadow-xs transition hover:bg-emerald-700"
             >
-              {label}
+              +
             </button>
-          ))}
+          ) : null}
+
+          {activeTab === 'context' ? (
+            <button
+              type="button"
+              onClick={openContextEditor}
+              disabled={isEditingContext}
+              aria-label="Update AI Context"
+              title="Update AI Context"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-600 text-base font-medium leading-none text-white shadow-xs transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              +
+            </button>
+          ) : null}
         </div>
       </div>
 
-      <div className="mt-4" role="tabpanel">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-1.5 border-b border-slate-100 pb-2.5 md:hidden">
+        <h2 className="min-w-0 whitespace-nowrap text-sm font-semibold text-slate-900">Activity Logs</h2>
+
+        {activeTab === 'notes' ? (
+          <button
+            type="button"
+            onClick={() => setIsAddingNote((current) => !current)}
+            aria-label="Add Staff Note"
+            title="Add Staff Note"
+            className="col-start-2 row-start-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-base font-medium leading-none text-white shadow-xs transition hover:bg-emerald-700"
+          >
+            +
+          </button>
+        ) : null}
+
+        {activeTab === 'context' ? (
+          <button
+            type="button"
+            onClick={openContextEditor}
+            disabled={isEditingContext}
+            aria-label="Update AI Context"
+            title="Update AI Context"
+            className="col-start-2 row-start-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-600 text-base font-medium leading-none text-white shadow-xs transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            +
+          </button>
+        ) : null}
+
+        <div className="col-span-2 row-start-2 flex min-w-0 w-full items-center" role="tablist" aria-label="Patient activity views">
+          <div className="flex min-w-0 w-full flex-nowrap items-center gap-0.5 rounded-lg border border-slate-200/80 bg-slate-50 p-0.5">
+            {([
+              ['timeline', 'Timeline'],
+              ['notes', 'Staff Notes'],
+              ['context', 'AI Context'],
+            ] as const).map(([tab, label]) => (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+                className={`min-w-0 flex-1 whitespace-nowrap rounded-md border px-1 py-1 text-[10px] font-medium transition-colors duration-150 ${
+                  activeTab === tab
+                    ? 'border-blue-200 bg-blue-50 text-blue-600 shadow-none'
+                    : 'border-transparent bg-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-700'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3" role="tabpanel">
         {activeTab === 'timeline' ? (
           timeline.length === 0 ? (
-            <p className="py-6 text-center text-xs text-slate-400">No timeline events yet.</p>
+            <p className="py-4 text-center text-xs text-slate-400">No timeline events yet.</p>
           ) : (
-            <ol className="relative space-y-4 border-l border-slate-200 pl-4">
+            <ol className="relative space-y-3 border-l border-slate-200 pl-4">
               {timeline.map((event) => (
                 <li key={event.id} className="relative">
-                  <span className="absolute -left-[1.35rem] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-slate-600 ring-2 ring-slate-200" />
-                  <p className="min-w-0 break-words text-sm font-semibold text-slate-800">{event.title}</p>
+                  <span className="absolute -left-[1.3rem] top-1.5 h-2 w-2 rounded-full border-2 border-white bg-slate-500 ring-1 ring-slate-200" />
+                  <p className="min-w-0 break-words text-sm font-medium text-slate-800">{event.title}</p>
                   {event.description ? (
-                    <p className="mt-0.5 min-w-0 break-words text-sm text-slate-600">{event.description}</p>
+                    <p className="mt-0.5 min-w-0 break-words text-xs text-slate-600">{event.description}</p>
                   ) : null}
-                  <p className="mt-1 text-xs text-slate-400">
+                  <p className="mt-1 text-[11px] text-slate-400">
                     By {event.actorName ?? 'Staff'} • {formatTimelineDate(event.createdAt)}
                   </p>
                 </li>
@@ -128,18 +211,8 @@ export function PatientActivityLogsCard({
 
         {activeTab === 'notes' ? (
           <div>
-            <div className="mb-3 flex items-center justify-end">
-              <button
-                type="button"
-                onClick={() => setIsAddingNote((current) => !current)}
-                className="inline-flex h-7 items-center gap-1 rounded-md bg-emerald-600 px-2.5 py-1 text-xs font-medium text-white shadow-xs transition hover:bg-emerald-700"
-              >
-                + Add Staff Note
-              </button>
-            </div>
-
             {isAddingNote ? (
-              <div className="mb-3 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+              <div className="mb-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
                 <textarea
                   value={noteDraft}
                   onChange={(event) => setNoteDraft(event.target.value)}
@@ -171,16 +244,16 @@ export function PatientActivityLogsCard({
             ) : null}
 
             {staffNotes.length === 0 ? (
-              <p className="py-6 text-center text-xs text-slate-400">No staff notes yet.</p>
+              <p className="py-4 text-center text-xs text-slate-400">No staff notes yet.</p>
             ) : (
               <ul>
                 {staffNotes.map((note) => (
                   <li
                     key={note.id}
-                    className="mb-2.5 rounded-xl border border-slate-200/80 bg-slate-50 p-3.5 last:mb-0"
+                    className="mb-1.5 rounded-lg border border-slate-200/80 bg-slate-50/70 p-2.5 last:mb-0"
                   >
                     <p className="min-w-0 break-words text-sm text-slate-700">{note.content}</p>
-                    <p className="mt-2 text-xs text-slate-400">
+                    <p className="mt-1.5 text-[11px] text-slate-400">
                       {note.authorName} · {formatRelativeTime(note.createdAt)}
                     </p>
                   </li>
@@ -192,22 +265,12 @@ export function PatientActivityLogsCard({
 
         {activeTab === 'context' ? (
           <div>
-            <div className="mb-3 flex items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={openContextEditor}
-                disabled={isEditingContext}
-                className="inline-flex h-7 items-center gap-1 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-medium text-white shadow-xs transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                + Update AI Context
-              </button>
-            </div>
-
-            <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-4">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/70 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                <span aria-hidden="true">●</span>
-                Active in Preet Memory
-              </span>
+            <div className="rounded-lg border border-slate-200/80 bg-slate-50/70 p-3">
+              {aiContextIntel?.trim() ? (
+                <span className="text-xs font-medium text-emerald-700">
+                  Active in Preet Memory
+                </span>
+              ) : null}
 
               {isEditingContext ? (
                 <textarea
@@ -218,9 +281,16 @@ export function PatientActivityLogsCard({
                   placeholder="Add psychological intel for the AI agent..."
                 />
               ) : (
-                <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-800">
-                  {aiContextIntel?.trim() || 'No active psychological intel set for AI agent.'}
-                </p>
+                <div className="mt-3">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-800">
+                    {aiContextIntel?.trim() || 'No AI context added yet.'}
+                  </p>
+                  {!aiContextIntel?.trim() ? (
+                    <p className="mt-1 text-xs text-slate-500">
+                      Add context to help Preet respond with relevant patient insight.
+                    </p>
+                  ) : null}
+                </div>
               )}
 
               {isEditingContext ? (
