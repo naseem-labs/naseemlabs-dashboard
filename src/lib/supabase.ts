@@ -3,7 +3,14 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-let client: SupabaseClient | null = null;
+export const supabase = createClient(supabaseUrl!, supabaseAnonKey!, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+  },
+});
 
 export function isSupabaseConfigured(): boolean {
   return Boolean(supabaseUrl && supabaseAnonKey);
@@ -16,16 +23,5 @@ export function getSupabaseClient(): SupabaseClient {
     );
   }
 
-  if (!client) {
-    client = createClient(supabaseUrl!, supabaseAnonKey!, {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-        storageKey: 'naseemlabs_auth_session',
-      },
-    });
-  }
-
-  return client;
+  return supabase;
 }
